@@ -1,0 +1,4 @@
+aligent_livechat_bundle:
+    resource: "@AligentLiveChatBundle/Controller"
+    type:     annotation
+    prefix:   /livechatinc

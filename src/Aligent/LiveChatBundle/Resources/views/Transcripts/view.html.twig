@@ -1,0 +1,64 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroActivityBundle::macros.html.twig' as AC %}
+
+{% oro_title_set({params : {"%contact_name%": entity.contactName|default('N/A') }}) %}
+
+{% block navButtons %}
+{% endblock navButtons %}
+
+{% block stats %}
+    {# Display contexts targets in the activity view page #}
+    <li class="context-data activity-context-activity-block">
+        {{ AC.activity_contexts(entity) }}
+    </li>
+{% endblock %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity':      entity,
+    'indexPath':   path('livechat_transcript_index'),
+    'indexLabel':  'livechat.chattranscript.entity_plural_label'|trans,
+    'entityTitle': entity.contactName|default('N/A'),
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set chatMetadataWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'livechat.widget.chat_metadata'|trans,
+            'url': path('livechat_transcript_widget_metadata', {id: entity.id, renderContexts: 0})
+        }) }}
+    {% endset %}
+
+    {% set chatTranscriptWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'livechat.widget.chat_transcript'|trans,
+            'url': path('livechat_transcript_widget_transcript', {id: entity.id, renderContexts: 0})
+        }) }}
+    {% endset %}
+
+
+    {% set dataBlocks = [
+        {
+            'title': 'livechat.sections.chat_metadata'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [chatMetadataWidget]}
+            ]
+        },
+        {
+            'title': 'livechat.sections.transcript'|trans,
+            'subblocks': [
+                {'data' : [chatTranscriptWidget]}
+            ]
+        },
+    ] %}
+
+    {% set id = 'callView' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+    {{ parent() }}
+{% endblock content_data %}

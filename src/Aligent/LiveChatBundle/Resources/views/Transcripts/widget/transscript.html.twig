@@ -1,0 +1,29 @@
+<div class="widget-content">
+    <div class="grid-container">
+        <table class="grid table-hover table table-bordered table-condensed">
+            <thead class="grid-header">
+                <tr class="grid-header-row">
+                    <th class="grid-cell grid-header-cell string-cell" width="10">
+                        <span class="grid-header-cell__label">Time</span>
+                    </th>
+                    <th class="grid-cell grid-header-cell string-cell" width="90">
+                        <span class="grid-header-cell__label">Message</span>
+                    </th>
+                </tr>
+            </thead>
+            <tfoot class="grid-footer"></tfoot>
+            <tbody class="grid-body">
+                {%  for item in transcript %}
+                    <tr class="grid-row">
+                        <td class="string-cell grid-cell grid-body-cell">
+                            {{ item.time|oro_format_time({'timeZone': ''}) }}
+                        </td>
+                        <td class="string-cell grid-cell grid-body-cell grid-body-cell-name">
+                            <strong style="color: {% if item.is_contact %}royalblue{% else %}darkblue{% endif %};">{{ item.author }}:</strong> {{ item.text }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

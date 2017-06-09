@@ -1,0 +1,19 @@
+navigation:
+  menu_config:
+      items:
+          transcript_list:
+              label: livechat.chattranscript.entity_plural_label
+              route: livechat_transcript_index
+              position: 21
+              extras:
+                  routes: ['livechat_*']
+                  description: 'livechat.menu.transcript_list.description'
+
+      tree:
+          application_menu:
+              children:
+                  activities_tab:
+                      children:
+                          transcript_list: ~
+  titles:
+      livechat_transcript_view: '%contact_name%'

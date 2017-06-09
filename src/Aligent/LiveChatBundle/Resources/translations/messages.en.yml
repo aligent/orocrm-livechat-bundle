@@ -1,0 +1,25 @@
+livechat:
+  chattranscript:
+    entity_label:             Chat Transcript
+    entity_plural_label:      Chat Transcripts
+    entity_description:       Transcripts from LiveChat
+    id.label:                 Id
+    agent_name.label:         Agent Name
+    chat_end.label:           Chat Ended At
+    chat_start.label:         Chat Started At
+    contact_name.label:       Contact Name
+    email.label:              Contact Email Address
+    livechat_chat_id.label:   LiveChat Chat Id
+    transcript.label:         Chat Transcript
+  menu:
+    transcript_list:
+      description: "List of chat transcripts"
+  widget:
+    chat_metadata: "Chat Metadata"
+    chat_transcript: "Transcript"
+  sections:
+    chat_metadata: "Metadata"
+    transcript: "Transcript"
+  view_chat: "View {{ entity }}"
+  created_by:  "with {{ user }}"
+  changed_by:  "with {{ user }}, updated by {{ editor }}"

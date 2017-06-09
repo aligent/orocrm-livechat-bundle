@@ -1,0 +1,63 @@
+parameters:
+    livechat.chattranscript.entity.class:            Aligent\LiveChatBundle\Entity\ChatTranscript
+    livechat.chattranscript.activity.manager.class:  Aligent\LiveChatBundle\Entity\Manager\ChatTranscriptManager
+    livechat.activity_list.provider.class:           Aligent\LiveChatBundle\Provider\ChatActivityListProvider
+    livechat.listener.entity_listener.class:         Aligent\LiveChatBundle\EventListener\EntityListener
+
+services:
+    livechat.guzzle:
+        class: Guzzle\Http\Client
+
+    livechat.api_client_visitor:
+        class: Aligent\LiveChatBundle\Service\API\Client\Visitor
+        arguments: ['@logger', '@serializer.encoder.json', '@livechat.guzzle', '@router']
+
+    livechat.webhook_chatstart:
+        class: Aligent\LiveChatBundle\Service\Webhook\ChatStart
+        arguments: ['@logger', '@serializer.encoder.json', '@oro_contact.contact.manager', "@livechat.api_client_visitor"]
+
+    livechat.webhook_chatend:
+        class: Aligent\LiveChatBundle\Service\Webhook\ChatEnd
+        arguments:
+          - '@logger'
+          - '@serializer.encoder.json'
+          - '@oro_contact.contact.manager'
+          - "@livechat.webhook_transcriptparser"
+          - "@oro_user.manager"
+          - "@livechat.repository.chattranscript"
+          - "@doctrine.orm.entity_manager"
+          - "@oro_activity.manager"
+
+    livechat.webhook_transcriptparser:
+        class: Aligent\LiveChatBundle\Service\Webhook\TranscriptParser
+        arguments: ['@logger', '@serializer.encoder.json']
+
+    livechat.repository.chattranscript:
+        class: 'Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - %livechat.chattranscript.entity.class%
+
+    livechat.chattranscript.activity.manager:
+        class: '%livechat.chattranscript.activity.manager.class%'
+        arguments:
+            - "@oro_activity.manager"
+
+    livechat.activity_list.provider:
+        class: %livechat.activity_list.provider.class%
+        arguments:
+           - "@oro_entity.doctrine_helper"
+           - "@oro_security.owner.entity_owner_accessor.link"
+           - "@oro_activity.association_helper"
+           - "@oro_comment.association_helper"
+           - "@livechat.webhook_transcriptparser"
+        tags:
+           - {name: oro_activity_list.provider, priority: 10 }
+
+    livechat.listener.entity_listener:
+        class: %livechat.listener.entity_listener.class%
+        arguments:
+            - "@livechat.chattranscript.activity.manager"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+

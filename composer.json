@@ -1,0 +1,22 @@
+{
+    "name": "aligent/orocrm-livechat-bundle",
+    "description": "LiveChat Activity Bundle",
+    "homepage": "https://github.com/aligent/orocrm-livechat-bundle",
+    "keywords": ["Oro", "OroCRM", "LiveChat"],
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Jim O'Halloran",
+            "email": "jim@aligent.com.au",
+            "homepage": "http://www.aligent.com.au/"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "oro/platform": "2.1.*"
+    },
+    "autoload": {
+        "psr-4": { "Aligent\\LiveChatBundle\\": "src/" },
+        "exclude-from-classmap": ["src//Tests/"]
+    }
+}

@@ -1,0 +1,39 @@
+{% extends 'OroActivityListBundle:ActivityList/js:activityItemTemplate.html.twig' %}
+{% import 'OroActivityBundle::macros.html.twig' as AC %}
+
+{% set entityClass = 'Aligent\\LiveChatBundle\\Entity\\ChatTranscript' %}
+{% set entityName = oro_entity_config_value(entityClass, 'label')|trans %}
+
+{% block activityDetails %}
+    {{ entityName }}
+    <% var template = (verb == 'create')
+    ? {{ 'livechat.created_by'|trans|json_encode|raw }}
+    : {{ 'livechat.changed_by'|trans|json_encode|raw }};
+    %>
+    <%= _.template(template, { interpolate: /\{\{(.+?)\}\}/g })({
+    user: owner_url ? '<a class="user" href="' + owner_url + '">' +  _.escape(owner) + '</a>' :  '<span class="user">' + _.escape(owner) + '</span>',
+    date: '<i class="date">' + createdAt + '</i>',
+    editor: editor_url ? '<a class="user" href="' + editor_url + '">' +  _.escape(editor) + '</a>' : _.escape(editor),
+    editor_date: '<i class="date">' + updatedAt + '</i>'
+    }) %>
+{% endblock %}
+
+{% block activityActions %}
+    {% set action %}
+        <% if (editable) { %>
+        {{ AC.activity_context_link() }}
+        <% } %>
+    {% endset %}
+    {% set actions = [action] %}
+
+    {% set action %}
+        <a href="<%= routing.generate('livechat_transcript_view', {'id': relatedActivityId}) %>"
+           title="{{ 'livechat.view_chat'|trans({'{{ entity }}': entityName}) }}"><i
+                    class="fa-eye hide-text">{{ 'livechat.view_chat'|trans({'{{ entity }}': entityName}) }}</i>
+            {{ 'livechat.view_chat'|trans({'{{ entity }}': entityName}) }}
+        </a>
+    {% endset %}
+    {% set actions = actions|merge([action]) %}
+
+    {{ parent() }}
+{% endblock %}

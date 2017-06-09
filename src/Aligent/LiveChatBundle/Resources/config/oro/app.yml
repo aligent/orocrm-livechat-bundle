@@ -1,0 +1,5 @@
+security:
+    firewalls:
+        livechatwebhook:
+            pattern: ^/livechatinc/webhook
+            anonymous: true

@@ -1,0 +1,26 @@
+{% import 'OroUIBundle::macros.html.twig' as ui %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroActivityBundle::macros.html.twig' as AC %}
+{% import 'OroEmailBundle::macros.html.twig' as email %}
+
+<div class="widget-content form-horizontal box-content box-split-content row-fluid">
+    <div class="responsive-block">
+        {# Display contexts targets in the activity list item view #}
+        {% if renderContexts is defined and renderContexts %}
+            <div class="activity-context-activity-list">
+                {{ AC.activity_contexts(entity) }}
+            </div>
+        {% endif %}
+
+        {{ ui.renderProperty('livechat.chattranscript.contact_name.label'|trans, entity.contactName) }}
+        {{ ui.renderHtmlProperty('livechat.chattranscript.email.label'|trans, email.renderEmailWithActions(entity.email, entity)) }}
+        {{ ui.renderProperty('livechat.chattranscript.agent_name.label'|trans, entity.agentName) }}
+    </div>
+    <div class="responsive-block">
+        {{ ui.renderProperty('livechat.chattranscript.chat_start.label'|trans, entity.chatStart|oro_format_datetime) }}
+        {{ ui.renderProperty('livechat.chattranscript.chat_end.label'|trans, entity.chatEnd|oro_format_datetime) }}
+    </div>
+    <div class="responsive-block">
+        {{ entityConfig.renderDynamicFields(entity) }}
+    </div>
+</div>

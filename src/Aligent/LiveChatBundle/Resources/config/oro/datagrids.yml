@@ -1,0 +1,74 @@
+datagrids:
+    livechat-transcripts-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - t.id
+                    - t.contactName
+                    - t.agentName
+                    - t.email
+                    - t.chatStart
+                from:
+                    - { table: %livechat.chattranscript.entity.class%, alias: t }
+                #join:
+                #    left:
+                #        - { join: t.priority, alias: priority }
+        columns:
+            id:
+                label: ID
+                frontend_type: integer
+            contactName:
+                label: Contact Name
+            email:
+                label: Email
+            chatStart:
+                label: Chat Started
+                frontend_type: datetime
+            agentName:
+                label: Agent Name
+        sorters:
+            columns:
+                id:
+                    data_name: t.id
+                contactName:
+                    data_name: t.contactName
+                email:
+                    data_name: t.email
+                chatStart:
+                    data_name: t.chatStart
+                agentName:
+                    data_name: t.agentName
+            default:
+                chatStart: DESC
+        filters:
+            columns:
+                id:
+                    type: number
+                    data_name: t.id
+                contactName:
+                    type: string
+                    data_name: t.contactName
+                email:
+                    type: string
+                    data_name: t.email
+                chatStart:
+                    type: datetime
+                    data_name: t.chatStart
+                agentName:
+                    type: string
+                    data_name: t.agentName
+        properties:
+            id: ~
+            view_link:
+                type:       url
+                route:      livechat_transcript_view
+                params:     [ id ]
+        actions:
+            view:
+                type:          navigate
+                acl_resource:  livechat_transcript_view
+                label:         oro.grid.action.view
+                icon:          eye
+                link:          view_link
+                rowAction:     true
