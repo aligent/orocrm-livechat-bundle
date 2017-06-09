@@ -10,6 +10,16 @@ use Aligent\LiveChatBundle\Service\Webhook\ChatException;
 use Aligent\LiveChatBundle\Service\Webhook\ChatStart;
 use Aligent\LiveChatBundle\Tests\Unit\DataFixtures\LoadContactEnhancedEntities;
 
+/**
+ * Unit tests for Visitor service
+ *
+ * @category  Aligent
+ * @package   LiveChatBundle
+ * @author    Jim O'Halloran <jim@aligent.com.au>
+ * @copyright 2017 Aligent Consulting.
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      http://www.aligent.com.au/
+ **/
 class VisitorTest extends WebTestCase {
 
     /** @var  Visitor */

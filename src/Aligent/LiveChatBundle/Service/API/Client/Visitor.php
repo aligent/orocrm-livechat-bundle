@@ -9,6 +9,16 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
+/**
+ * Service class for accessing "visitor" API
+ *
+ * @category  Aligent
+ * @package   LiveChatBundle
+ * @author    Jim O'Halloran <jim@aligent.com.au>
+ * @copyright 2017 Aligent Consulting.
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      http://www.aligent.com.au/
+ **/
 class Visitor {
 
     const API_URL = "https://api.livechatinc.com/visitors/{{visitor_id}}/details";

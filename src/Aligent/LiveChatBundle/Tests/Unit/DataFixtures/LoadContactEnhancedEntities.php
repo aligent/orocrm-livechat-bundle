@@ -7,6 +7,16 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ContactBundle\Entity\Contact;
 use Oro\Bundle\ContactBundle\Entity\ContactPhone;
 
+/**
+ * Enhanced fixture data for contacts
+ *
+ * @category  Aligent
+ * @package   LiveChatBundle
+ * @author    Jim O'Halloran <jim@aligent.com.au>
+ * @copyright 2017 Aligent Consulting.
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      http://www.aligent.com.au/
+ **/
 class LoadContactEnhancedEntities extends AbstractFixture
 {
     const FIRST_ENTITY_NAME  = 'Jonathan';
