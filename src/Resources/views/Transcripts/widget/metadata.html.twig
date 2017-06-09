@@ -12,13 +12,13 @@
             </div>
         {% endif %}
 
-        {{ ui.renderProperty('livechat.chattranscript.contact_name.label'|trans, entity.contactName) }}
-        {{ ui.renderHtmlProperty('livechat.chattranscript.email.label'|trans, email.renderEmailWithActions(entity.email, entity)) }}
-        {{ ui.renderProperty('livechat.chattranscript.agent_name.label'|trans, entity.agentName) }}
+        {{ ui.renderProperty('aligent.livechat.chattranscript.contact_name.label'|trans, entity.contactName) }}
+        {{ ui.renderHtmlProperty('aligent.livechat.chattranscript.email.label'|trans, email.renderEmailWithActions(entity.email, entity)) }}
+        {{ ui.renderProperty('aligent.livechat.chattranscript.agent_name.label'|trans, entity.agentName) }}
     </div>
     <div class="responsive-block">
-        {{ ui.renderProperty('livechat.chattranscript.chat_start.label'|trans, entity.chatStart|oro_format_datetime) }}
-        {{ ui.renderProperty('livechat.chattranscript.chat_end.label'|trans, entity.chatEnd|oro_format_datetime) }}
+        {{ ui.renderProperty('aligent.livechat.chattranscript.chat_start.label'|trans, entity.chatStart|oro_format_datetime) }}
+        {{ ui.renderProperty('aligent.livechat.chattranscript.chat_end.label'|trans, entity.chatEnd|oro_format_datetime) }}
     </div>
     <div class="responsive-block">
         {{ entityConfig.renderDynamicFields(entity) }}

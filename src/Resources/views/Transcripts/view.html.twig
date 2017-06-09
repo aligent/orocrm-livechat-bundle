@@ -18,7 +18,7 @@
     {% set breadcrumbs = {
     'entity':      entity,
     'indexPath':   path('livechat_transcript_index'),
-    'indexLabel':  'livechat.chattranscript.entity_plural_label'|trans,
+    'indexLabel':  'aligent.livechat.chattranscript.entity_plural_label'|trans,
     'entityTitle': entity.contactName|default('N/A'),
     } %}
     {{ parent() }}
@@ -28,7 +28,7 @@
     {% set chatMetadataWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'livechat.widget.chat_metadata'|trans,
+            'title': 'aligent.livechat.widget.chat_metadata'|trans,
             'url': path('livechat_transcript_widget_metadata', {id: entity.id, renderContexts: 0})
         }) }}
     {% endset %}
@@ -36,7 +36,7 @@
     {% set chatTranscriptWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'livechat.widget.chat_transcript'|trans,
+            'title': 'aligent.livechat.widget.chat_transcript'|trans,
             'url': path('livechat_transcript_widget_transcript', {id: entity.id, renderContexts: 0})
         }) }}
     {% endset %}
@@ -44,14 +44,14 @@
 
     {% set dataBlocks = [
         {
-            'title': 'livechat.sections.chat_metadata'|trans,
+            'title': 'aligent.livechat.sections.chat_metadata'|trans,
             'class': 'active',
             'subblocks': [
                 {'data' : [chatMetadataWidget]}
             ]
         },
         {
-            'title': 'livechat.sections.transcript'|trans,
+            'title': 'aligent.livechat.sections.transcript'|trans,
             'subblocks': [
                 {'data' : [chatTranscriptWidget]}
             ]

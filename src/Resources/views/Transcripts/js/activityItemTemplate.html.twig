@@ -7,8 +7,8 @@
 {% block activityDetails %}
     {{ entityName }}
     <% var template = (verb == 'create')
-    ? {{ 'livechat.created_by'|trans|json_encode|raw }}
-    : {{ 'livechat.changed_by'|trans|json_encode|raw }};
+    ? {{ 'aligent.livechat.created_by'|trans|json_encode|raw }}
+    : {{ 'aligent.livechat.changed_by'|trans|json_encode|raw }};
     %>
     <%= _.template(template, { interpolate: /\{\{(.+?)\}\}/g })({
     user: owner_url ? '<a class="user" href="' + owner_url + '">' +  _.escape(owner) + '</a>' :  '<span class="user">' + _.escape(owner) + '</span>',
@@ -28,9 +28,9 @@
 
     {% set action %}
         <a href="<%= routing.generate('livechat_transcript_view', {'id': relatedActivityId}) %>"
-           title="{{ 'livechat.view_chat'|trans({'{{ entity }}': entityName}) }}"><i
-                    class="fa-eye hide-text">{{ 'livechat.view_chat'|trans({'{{ entity }}': entityName}) }}</i>
-            {{ 'livechat.view_chat'|trans({'{{ entity }}': entityName}) }}
+           title="{{ 'aligent.livechat.view_chat'|trans({'{{ entity }}': entityName}) }}"><i
+                    class="fa-eye hide-text">{{ 'aligent.livechat.view_chat'|trans({'{{ entity }}': entityName}) }}</i>
+            {{ 'aligent.livechat.view_chat'|trans({'{{ entity }}': entityName}) }}
         </a>
     {% endset %}
     {% set actions = actions|merge([action]) %}

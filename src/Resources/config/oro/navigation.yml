@@ -2,12 +2,12 @@ navigation:
   menu_config:
       items:
           transcript_list:
-              label: livechat.chattranscript.entity_plural_label
+              label: aligent.livechat.chattranscript.entity_plural_label
               route: livechat_transcript_index
               position: 21
               extras:
                   routes: ['livechat_*']
-                  description: 'livechat.menu.transcript_list.description'
+                  description: 'aligent.livechat.menu.transcript_list.description'
 
       tree:
           application_menu:
