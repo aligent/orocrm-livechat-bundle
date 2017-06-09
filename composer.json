@@ -16,7 +16,7 @@
         "oro/platform": "2.1.*"
     },
     "autoload": {
-        "psr-4": { "Aligent\\LiveChatBundle\\": "src/" },
-        "exclude-from-classmap": ["src//Tests/"]
+        "psr-0": { "Aligent\\LiveChatBundle": "." },
+        "exclude-from-classmap": ["Aligent/LiveChatBundle/Tests/"]
     }
 }
