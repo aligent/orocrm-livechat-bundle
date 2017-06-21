@@ -10,6 +10,7 @@
 
 namespace Aligent\LiveChatBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -23,15 +24,15 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
-    {
+    public function getConfigTreeBuilder() {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('aligent_livechat');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
-
+        SettingsBuilder::append($rootNode, [
+            'webhook_password' => [
+                'value' => '',
+            ],
+        ]);
         return $treeBuilder;
     }
 }

@@ -1,0 +1,29 @@
+system_configuration:
+    groups:
+        livechat_configuration:
+            icon:  fa-comments
+            title: aligent.livechat.system_configuration.live_chat_configuration
+            page_reload: true
+        webhook_settings:
+            title: aligent.livechat.system_configuration.webhook_settings.label
+            priority: 65
+
+    fields:
+        aligent_livechat.webhook_password:
+            data_type: string
+            type: password
+            options:
+                label: aligent.livechat.system_configuration.webhook_settings.webhook_password.label
+                required: false
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            livechat_configuration:
+                                children:
+                                    webhook_settings:
+                                        children:
+                                            - aligent_livechat.webhook_password

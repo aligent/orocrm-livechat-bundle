@@ -24,3 +24,11 @@ aligent:
     view_chat: "View {{ entity }}"
     created_by:  "with {{ user }}"
     changed_by:  "with {{ user }}, updated by {{ editor }}"
+    system_configuration:
+      live_chat_configuration: "Live Chat Configuration"
+      webhook_settings:
+        label: "Webhook Settings"
+        webhook_password:
+          label: "HTTP Auth Password"
+
+
