@@ -9,7 +9,7 @@ system_configuration:
             priority: 65
 
     fields:
-        aligent_livechat.webhook_password:
+        aligent_live_chat.webhook_password:
             data_type: string
             type: password
             options:
@@ -26,4 +26,4 @@ system_configuration:
                                 children:
                                     webhook_settings:
                                         children:
-                                            - aligent_livechat.webhook_password
+                                            - aligent_live_chat.webhook_password

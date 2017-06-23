@@ -23,7 +23,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class WebhookController extends Controller {
 
     const WEBHOOK_USERNAME = 'livechatinc';
-    const WEBHOOK_PASSWORD = 'DBH4LXo56Vv4';
 
     /**
      * @Route("/chatStart")
@@ -77,13 +76,24 @@ class WebhookController extends Controller {
             return false;
         } else {
             if ($_SERVER['PHP_AUTH_USER'] == self::WEBHOOK_USERNAME &&
-                $_SERVER['PHP_AUTH_PW'] == self::WEBHOOK_PASSWORD) {
+                $_SERVER['PHP_AUTH_PW'] == $this->getWebhookPassword()) {
                 return true;
             }
         }
         return false;
     }
 
+
+    /**
+     * Fetches the current password from system config
+     *
+     * @return string Password for webhook authentication
+     */
+    protected function getWebhookPassword() {
+        $config = $this->get('oro_config.user');
+        $password = $config->get('aligent_live_chat.webhook_password');
+        return $password;
+    }
 
     /**
      * Manually process the $_SERVER['Authenticated'] superglobal into username
