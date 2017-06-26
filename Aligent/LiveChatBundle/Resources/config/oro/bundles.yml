@@ -1,2 +1,2 @@
 bundles:
-    - Aligent\LiveChatBundle\AligentLiveChatBundle
+    - { name: Aligent\LiveChatBundle\AligentLiveChatBundle, priority: 50 }
