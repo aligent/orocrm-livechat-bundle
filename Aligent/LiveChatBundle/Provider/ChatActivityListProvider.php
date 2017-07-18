@@ -83,7 +83,7 @@ class ChatActivityListProvider implements
      */
     public function getSubject($entity) {
         /** @var $entity ChatTranscript */
-        return trim(strip_tags($this->transcriptParser->getFirstCustomerMsg($entity->getTranscript())));return $entity->getLivechatChatId();
+        return trim(strip_tags($this->transcriptParser->getFirstCustomerMsg($entity->getTranscript())));
     }
 
     /**

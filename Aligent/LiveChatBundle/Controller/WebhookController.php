@@ -3,6 +3,7 @@
 namespace Aligent\LiveChatBundle\Controller;
 
 use Aligent\LiveChatBundle\Service\Webhook\ChatException;
+use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -86,13 +87,16 @@ class WebhookController extends Controller {
 
     /**
      * Fetches the current password from system config
+     * and decrypts it using
      *
      * @return string Password for webhook authentication
      */
     protected function getWebhookPassword() {
         $config = $this->get('oro_config.user');
         $password = $config->get('aligent_live_chat.webhook_password');
-        return $password;
+        /** @var Mcrypt $encryptor */
+        $encryptor = $this->get('oro_security.encoder.mcrypt');
+        return $encryptor->decryptData($password);
     }
 
     /**

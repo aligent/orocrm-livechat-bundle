@@ -3,6 +3,7 @@ parameters:
     livechat.chattranscript.activity.manager.class:  Aligent\LiveChatBundle\Entity\Manager\ChatTranscriptManager
     livechat.activity_list.provider.class:           Aligent\LiveChatBundle\Provider\ChatActivityListProvider
     livechat.listener.entity_listener.class:         Aligent\LiveChatBundle\EventListener\EntityListener
+    livechat.listener.config_listener.class:         Aligent\LiveChatBundle\EventListener\ConfigListener
 
 services:
     livechat.guzzle:
@@ -61,3 +62,9 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
+    livechat.listener.system_config:
+      class: %livechat.listener.config_listener.class%
+      arguments:
+        - "@oro_security.encoder.mcrypt"
+      tags:
+        - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onBeforeSave }
