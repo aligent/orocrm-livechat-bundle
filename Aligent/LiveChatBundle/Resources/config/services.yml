@@ -5,9 +5,15 @@ parameters:
     livechat.listener.entity_listener.class:         Aligent\LiveChatBundle\EventListener\EntityListener
     livechat.listener.config_listener.class:         Aligent\LiveChatBundle\EventListener\ConfigListener
 
+    livechat.security.encoder.bcrypt.cost: 10
+
 services:
     livechat.guzzle:
         class: Guzzle\Http\Client
+
+    livechat.security.encoder.bcrypt:
+        class: '%security.encoder.bcrypt.class%'
+        arguments: ['%livechat.security.encoder.bcrypt.cost%']
 
     livechat.api_client_visitor:
         class: Aligent\LiveChatBundle\Service\API\Client\Visitor
@@ -65,6 +71,6 @@ services:
     livechat.listener.system_config:
       class: %livechat.listener.config_listener.class%
       arguments:
-        - "@oro_security.encoder.mcrypt"
+        - "@livechat.security.encoder.bcrypt"
       tags:
         - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onBeforeSave }

@@ -3,10 +3,10 @@
 namespace Aligent\LiveChatBundle\Controller;
 
 use Aligent\LiveChatBundle\Service\Webhook\ChatException;
-use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 
 
 /**
@@ -77,7 +77,7 @@ class WebhookController extends Controller {
             return false;
         } else {
             if ($_SERVER['PHP_AUTH_USER'] == self::WEBHOOK_USERNAME &&
-                $_SERVER['PHP_AUTH_PW'] == $this->getWebhookPassword()) {
+                $this->validateWebhookPassword($_SERVER['PHP_AUTH_PW'])) {
                 return true;
             }
         }
@@ -91,12 +91,15 @@ class WebhookController extends Controller {
      *
      * @return string Password for webhook authentication
      */
-    protected function getWebhookPassword() {
+    protected function validateWebhookPassword($enteredPassword) {
         $config = $this->get('oro_config.user');
         $password = $config->get('aligent_live_chat.webhook_password');
-        /** @var Mcrypt $encryptor */
-        $encryptor = $this->get('oro_security.encoder.mcrypt');
-        return $encryptor->decryptData($password);
+
+
+        /** @var BCryptPasswordEncoder $encoder */
+        $encoder = $this->get('livechat.security.encoder.bcrypt');
+        $valid = $encoder->isPasswordValid($password, $enteredPassword, false);
+        return $valid;
     }
 
     /**
