@@ -29,6 +29,9 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('aligent_live_chat');
 
         SettingsBuilder::append($rootNode, [
+            'webhook_username' => [
+                'value' => '',
+            ],
             'webhook_password' => [
                 'value' => '',
             ],

@@ -28,7 +28,7 @@ class ConfigListener {
     public function onBeforeSave(ConfigSettingsUpdateEvent $event) {
         $settings = $event->getSettings();
 
-        if (isset($settings['aligent_live_chat.webhook_password'])) {
+        if (isset($settings['aligent_live_chat.webhook_password']['value'])) {
             $value = $settings['aligent_live_chat.webhook_password']['value'];
             $settings['aligent_live_chat.webhook_password']['value'] = $this->encoder->encodePassword($value, false);
         }

@@ -29,6 +29,8 @@ aligent:
       live_chat_configuration: "Live Chat Configuration"
       webhook_settings:
         label: "Webhook Settings"
+        webhook_username:
+          label: "HTTP Auth Username"
         webhook_password:
           label: "HTTP Auth Password"
 

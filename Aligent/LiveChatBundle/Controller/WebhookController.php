@@ -23,8 +23,6 @@ use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
  */
 class WebhookController extends Controller {
 
-    const WEBHOOK_USERNAME = 'livechatinc';
-
     /**
      * @Route("/chatStart")
      * @return Response
@@ -76,7 +74,7 @@ class WebhookController extends Controller {
         if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ) {
             return false;
         } else {
-            if ($_SERVER['PHP_AUTH_USER'] == self::WEBHOOK_USERNAME &&
+            if ($this->validateWebhookUsername($_SERVER['PHP_AUTH_USER']) &&
                 $this->validateWebhookPassword($_SERVER['PHP_AUTH_PW'])) {
                 return true;
             }
@@ -86,10 +84,27 @@ class WebhookController extends Controller {
 
 
     /**
-     * Fetches the current password from system config
-     * and decrypts it using
+     * Fetches the current username from system config and compares the stored
+     * username to the one supplied via HTTP Basic Auth.
      *
-     * @return string Password for webhook authentication
+     * @param string $enteredUsername Username supplied via HTTP authentication
+     * @return boolean True if username is valid
+     */
+    protected function validateWebhookUsername($enteredUsername) {
+        $config = $this->get('oro_config.user');
+        $storedUsername = $config->get('aligent_live_chat.webhook_username');
+
+        $valid = $storedUsername == $enteredUsername;
+        return $valid;
+    }
+
+
+    /**
+     * Fetches the current password from system config
+     * and compares the stored hash to the one supplied via HTTP Basic Auth.
+     *
+     * @param string $enteredPassword Password supplied via HTTP authentication
+     * @return boolean True if password is correct
      */
     protected function validateWebhookPassword($enteredPassword) {
         $config = $this->get('oro_config.user');
