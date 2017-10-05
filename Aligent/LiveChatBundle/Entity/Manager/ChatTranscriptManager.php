@@ -68,7 +68,7 @@ class ChatTranscriptManager {
 
         $changedEntities = $uow->getScheduledEntityUpdates();
         foreach ($changedEntities as $entity) {
-            if ($entity instanceof Call) {
+            if ($entity instanceof ChatTranscript) {
                 $hasChanges = false;
                 $changeSet  = $uow->getEntityChangeSet($entity);
                 foreach ($changeSet as $field => $values) {
