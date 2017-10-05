@@ -219,7 +219,7 @@ class ChatEnd extends ChatEventAbstract {
      */
     protected function getUsersForAgents($agents) {
         if (count($agents) == 0) {
-            return [];
+            $users = [];
         } else {
             /** @var QueryBuilder $qb */
             $qb = $this->userManager->getRepository()->createQueryBuilder('u');
@@ -229,8 +229,15 @@ class ChatEnd extends ChatEventAbstract {
             $qb->addCriteria($criteria);
 
             $users = $qb->getQuery()->getResult();
-            return $users;
         }
+
+        if (count($users) == 0) {
+            $qb = $this->userManager->getRepository()->createQueryBuilder('u');
+            $qb->setMaxResults(1);
+            $users = $qb->getQuery()->getResult();
+        }
+
+        return $users;
     }
 
 
