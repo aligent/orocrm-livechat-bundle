@@ -3,8 +3,8 @@ Aligent LiveChat Integration Bundle for OroCRM
 
 Facts
 -----
-- version: 1.0.0
-- composer name: aligent/oro-livechat-bundle
+- version: 1.1.0
+- composer name: aligent/orocrm-livechat-bundle
 
 Description
 -----------
@@ -14,11 +14,23 @@ chat_start webhook and provide Oro Contact information for the LiveChat interfac
 On chat_ended webhook we capture the chat transcript and save it to OroCRM 
 associating it with the relevant contact.
 
+Once installed and configured, the following changes will be visible to the end user:
+* In the LiveChat interface, an Agent will see additional customer information in 
+    the sidebar (with an Oro icon) when a customer with an existing OroCRM contact 
+    initiates a chat.
+* In OroCRM you'll see a new option "Chat Transcripts" under the "Activities" menu.
+    This can be used to view past chat transcripts.
+* The Activities feed for a contact will include their live chat transcripts.
+
+If a customer without an existing contact in OroCRM initiates a live chat, the 
+transcript will still be recorded in OroCRM, but a contact record will not be 
+created.
+
 Installation Instructions
 -------------------------
 1. Install this module via Composer
 
-        composer require aligent/oro-livechat-bundle
+        composer require aligent/orocrm-livechat-bundle
 
 1. Clear cache and run migrations
 1. Set a password for the webhook via the Oro System Configuration
