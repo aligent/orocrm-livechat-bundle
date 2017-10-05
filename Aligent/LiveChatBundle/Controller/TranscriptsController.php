@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Transcripts cpntroller
+ * Transcripts controller
  *
  * @category  Aligent
  * @package   LiveChatBundle

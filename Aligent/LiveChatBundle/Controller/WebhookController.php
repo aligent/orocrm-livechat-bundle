@@ -91,7 +91,7 @@ class WebhookController extends Controller {
      * @return boolean True if username is valid
      */
     protected function validateWebhookUsername($enteredUsername) {
-        $config = $this->get('oro_config.user');
+        $config = $this->get('oro_config.manager');
         $storedUsername = $config->get('aligent_live_chat.webhook_username');
 
         $valid = $storedUsername == $enteredUsername;
@@ -107,7 +107,7 @@ class WebhookController extends Controller {
      * @return boolean True if password is correct
      */
     protected function validateWebhookPassword($enteredPassword) {
-        $config = $this->get('oro_config.user');
+        $config = $this->get('oro_config.manager');
         $password = $config->get('aligent_live_chat.webhook_password');
 
 
