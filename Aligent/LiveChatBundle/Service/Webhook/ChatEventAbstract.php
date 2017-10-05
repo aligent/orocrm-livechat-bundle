@@ -110,8 +110,8 @@ abstract class ChatEventAbstract {
             ->join('c.emails', 'e');
 
         $qb->andWhere(
-            $qb->expr()->like('e.email', ':query')
-        )->setParameter('query', sprintf('%%%s%%', $email))
+            $qb->expr()->eq('e.email', ':query')
+        )->setParameter('query', $email)
             ->setMaxResults(1);
 
         try {
