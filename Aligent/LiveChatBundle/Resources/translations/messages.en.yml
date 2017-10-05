@@ -12,6 +12,7 @@ aligent:
       email.label:              Contact Email Address
       livechat_chat_id.label:   LiveChat Chat Id
       transcript.label:         Chat Transcript
+      owner.label:              Chat Owner
     menu:
       transcript_list:
         description: "List of chat transcripts"
