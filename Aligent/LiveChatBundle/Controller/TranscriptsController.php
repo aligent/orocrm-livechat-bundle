@@ -30,7 +30,7 @@ class TranscriptsController extends Controller {
      * @AclAncestor("livechat_transcript_view")
      */
     public function indexAction() {
-        return array();
+        return [];
     }
 
 

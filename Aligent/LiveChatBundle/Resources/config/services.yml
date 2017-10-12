@@ -17,11 +17,20 @@ services:
 
     livechat.api_client_visitor:
         class: Aligent\LiveChatBundle\Service\API\Client\Visitor
-        arguments: ['@logger', '@serializer.encoder.json', '@livechat.guzzle', '@router']
+        arguments:
+          - '@logger'
+          - '@serializer.encoder.json'
+          - '@livechat.guzzle'
+          - '@router'
+          - '@translator.default'
 
     livechat.webhook_chatstart:
         class: Aligent\LiveChatBundle\Service\Webhook\ChatStart
-        arguments: ['@logger', '@serializer.encoder.json', '@oro_contact.contact.manager', "@livechat.api_client_visitor"]
+        arguments:
+          - '@logger'
+          - '@serializer.encoder.json'
+          - '@oro_contact.contact.manager'
+          - '@livechat.api_client_visitor'
 
     livechat.webhook_chatend:
         class: Aligent\LiveChatBundle\Service\Webhook\ChatEnd

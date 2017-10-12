@@ -2,10 +2,8 @@
 
 namespace Aligent\LiveChatBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Aligent\LiveChatBundle\Entity\ChatTranscript;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Transcript Repository Manager

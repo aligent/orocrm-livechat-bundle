@@ -16,6 +16,8 @@ aligent:
     menu:
       transcript_list:
         description: "List of chat transcripts"
+    datagrid:
+      email.label: Id
     widget:
       chat_metadata: "Chat Metadata"
       chat_transcript: "Transcript"
@@ -33,5 +35,8 @@ aligent:
           label: "HTTP Auth Username"
         webhook_password:
           label: "HTTP Auth Password"
-
+    visitor:
+      contact.label: "OroCRM Contact"
+      phone.label: 'Primary Phone'
+      system.name: 'OroCRM'
 

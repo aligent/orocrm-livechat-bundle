@@ -5,6 +5,7 @@ namespace Aligent\LiveChatBundle\Service\API\Client;
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\Response;
 use Oro\Bundle\ContactBundle\Entity\Contact;
+use Symfony\Component\Translation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -37,15 +38,19 @@ class Visitor {
     /** @var  Router */
     protected $router;
 
+    /** @var  Translator */
+    protected $translator;
+
     // Public only for visibility from unit tests
     public $licenseId = false;
     public $token = false;
 
-    public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, Client $guzzleClient, Router $router) {
+    public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, Client $guzzleClient, Router $router, TranslatorInterface $translator) {
         $this->logger = $logger;
         $this->jsonEncoder = $jsonEncoder;
         $this->guzzleClient = $guzzleClient;
         $this->router = $router;
+        $this->translator = $translator;
 
         $this->logger->debug("LiveChat API Client \"Visitor\" service initialized.");
     }
@@ -97,7 +102,7 @@ class Visitor {
     public function buildRequestData(Contact $contact) {
         $fields = [
             [
-                'name' => 'OroCRM Contact',
+                'name' => $this->translator->trans('aligent.livechat.visitor.contact.label'),
                 'value' => (string) $contact,  // Casting a contact to a string returns it's full name
                 'url' => $this->router->generate('oro_contact_view', ['id' => $contact->getId()], true)
             ]
@@ -105,7 +110,7 @@ class Visitor {
 
         if ($contact->getPrimaryPhone() !== null) {
             $fields[] = [
-                'name' => 'Primary Phone',
+                'name' => $this->translator->trans('aligent.livechat.visitor.phone.label'),
                 'value' => (string) $contact->getPrimaryPhone(), // ContactPhone object casts to string as the phone number
             ];
         }
@@ -113,7 +118,7 @@ class Visitor {
         return [
             'license_id' => $this->licenseId,
             'token' => $this->token,
-            'id' => 'OroCRM',
+            'id' => $this->translator->trans('aligent.livechat.visitor.system.name'),
 
             // Do not enter "http" prefix in the icon URL.
             // Your server must be able to serve the icon
