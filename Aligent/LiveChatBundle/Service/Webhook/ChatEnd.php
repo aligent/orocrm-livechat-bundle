@@ -2,6 +2,7 @@
 
 namespace Aligent\LiveChatBundle\Service\Webhook;
 
+use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
 use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -72,7 +73,9 @@ class ChatEnd extends ChatEventAbstract {
      * @inheritdoc
      */
     public function handleRequest($jsonString) {
-        $chatEndData = $this->parseChatWebhook($jsonString);
+        $chatEndData = new ChatEndData();
+
+        $this->parseChatWebhook($jsonString, $chatEndData);
 
         $contact = $this->getContactFromChatEvent($chatEndData->getVisitorEmail());
         $users = $this->getUsersForAgents($chatEndData->getAgents());
@@ -85,12 +88,11 @@ class ChatEnd extends ChatEventAbstract {
      * Extract the required fields from the chatEnd request payload.
      *
      * @param $jsonString string Raw JSON from request
-     * @return ChatEndData
+     * @return array Parsed JSON data
      * @throws ChatException
      */
-    public function parseChatWebhook($jsonString) {
-        $jsonData = parent::parseChatWebhook($jsonString);
-        $chatEndData = new ChatEndData();
+    public function parseChatWebhook($jsonString, AbstractDTO $chatEndData) {
+        $jsonData = parent::parseChatWebhook($jsonString, $chatEndData);
 
         if ($this->hasNonEmptyKey('chat', $jsonData)) {
             $chat = $jsonData['chat'];
@@ -121,17 +123,11 @@ class ChatEnd extends ChatEventAbstract {
             } else {
                 $this->parseError("Visitor name missing.");
             }
-
-            if ($this->hasNonEmptyKey('email', $visitor)) {
-                $chatEndData->setVisitorEmail($visitor['email']);
-            } else {
-                $this->parseError("Visitor email missing.");
-            }
         } else {
             $this->parseError("Visitor key missing");
         }
 
-        return $chatEndData;
+        return $jsonData;
     }
 
 

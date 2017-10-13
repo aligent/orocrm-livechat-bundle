@@ -2,6 +2,7 @@
 
 namespace Aligent\LiveChatBundle\Service\Webhook;
 
+use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
 use Doctrine\ORM\NoResultException;
 use Oro\Bundle\DotmailerBundle\Entity\Contact;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
@@ -54,14 +55,15 @@ abstract class ChatEventAbstract {
      * Extract the required fields from the chat event request payload.
      *
      * @param $jsonString
+     * @param AbstractDTO $dto A data transfer object for the parsed data
      * @throws ChatException
      * @return array Parsed JSON data for further procesing in child classes
      */
-    public function parseChatWebhook($jsonString) {
+    public function parseChatWebhook($jsonString, AbstractDTO $dto) {
         $jsonData = $this->decodeAndValidateWebhook($jsonString);
 
         if (isset($jsonData['visitor']['email'])) {
-            $this->visitorEmail = $jsonData['visitor']['email'];
+            $dto->setVisitorEmail($jsonData['visitor']['email']);
         } else {
             $this->logger->error("Malformed chat webhook.  Email field is missing.");
             throw new ChatException("Malformed chat webhook.  Email field is missing.");

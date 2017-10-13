@@ -2,6 +2,8 @@
 
 namespace Aligent\LiveChatBundle\Service\Webhook;
 
+use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
+use Aligent\LiveChatBundle\DataTransfer\ChatStartData;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Psr\Log\LoggerInterface;
 use Aligent\LiveChatBundle\Service\API\Client\Visitor;
@@ -23,11 +25,6 @@ class ChatStart extends ChatEventAbstract {
     /** @var Visitor  */
     protected $visitorApi;
 
-    // Properties to store the information we need from the Webhook request
-    public $visitorId = null;
-    public $apiLicenseId = null;
-    public $apiToken = null;
-
     const EVENT_TYPE = 'chat_started';
 
     public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, ApiEntityManager $contactManager, Visitor $visitor) {
@@ -45,17 +42,19 @@ class ChatStart extends ChatEventAbstract {
      * @param $jsonString string JSON string from request body.
      */
     public function handleRequest($jsonString) {
-        $chatData = $this->parseChatWebhook($jsonString);
+        $chatStartData = new ChatStartData();
 
-        $contact = $this->getContactFromChatEvent($this->visitorEmail);
+        $this->parseChatWebhook($jsonString, $chatStartData);
+
+        $contact = $this->getContactFromChatEvent($chatStartData->getVisitorEmail());
         if ($contact !== null) {
             $this->logger->info("Sending visitor API call for ". $contact->getEmail());
 
             $this->visitorApi
-                ->setApiCredentials($this->apiLicenseId, $this->apiToken)
-                ->sendVisitorApi($contact, $this->visitorId);
+                ->setApiCredentials($chatStartData->getApiLicenseId(), $chatStartData->getApiToken())
+                ->sendVisitorApi($contact, $chatStartData->getVisitorId());
         } else {
-            $this->logger->info("No contact record found for email: ". $this->visitorEmail);
+            $this->logger->info("No contact record found for email: ". $chatStartData->getVisitorEmail());
         }
     }
 
@@ -64,19 +63,19 @@ class ChatStart extends ChatEventAbstract {
      * Extract the required fields from the chatStart request payload.
      *
      * @param $jsonString
-     * @throws ChatException
-     * @return array Parsed JSON data
+     * @throws array Parsed JSON data
+     * @return ChatStartData A DTO containing the required information.
      */
-    public function parseChatWebhook($jsonString) {
-        $jsonData = parent::parseChatWebhook($jsonString);
+    public function parseChatWebhook($jsonString, AbstractDTO $chatStartData) {
+        $jsonData = parent::parseChatWebhook($jsonString, $chatStartData);
 
         if (isset($jsonData['visitor']['id']) &&
             isset($jsonData['license_id']) &&
             isset($jsonData['token'])
         ) {
-            $this->visitorId = $jsonData['visitor']['id'];
-            $this->apiLicenseId = $jsonData['license_id'];
-            $this->apiToken = $jsonData['token'];
+            $chatStartData->setVisitorId($jsonData['visitor']['id']);
+            $chatStartData->setApiLicenseId($jsonData['license_id']);
+            $chatStartData->setApiToken($jsonData['token']);
         } else {
             $this->logger->error("Malformed chatStart webhook.  One or more required data fields missing.");
             throw new ChatException("Malformed chatStart webhook.  One or more required data fields missing.");

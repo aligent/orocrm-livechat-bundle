@@ -1,20 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jim
- * Date: 12/10/17
- * Time: 4:20 PM
- */
-
 namespace Aligent\LiveChatBundle\DataTransfer;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * Abstract Data Transfer Object
- *
- * A simple, generic data transfer object (DTO), heavily inspired by Magento's
- * Varien_Object.
+ * Data Transfer Object for data parsed from Chat End webhook request
  *
  * @category  Aligent
  * @package   LiveChatBundle
@@ -31,7 +21,8 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @method User getOwner()
  * @method string getAgentName()
  * @method string getAgentEmail()
- * @method stringgetVisitorName()
+ * @method string getVisitorName()
+ * @method string getVisitorEmail()
  * @method ChatEndData setChatId(string $value)
  * @method ChatEndData setChatStart(\DateTime $value)
  * @method ChatEndData setChatEnd(\DateTime $value)
@@ -41,6 +32,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @method ChatEndData setAgentName(string $value)
  * @method ChatEndData setAgentEmail(string $value)
  * @method ChatEndData setVisitorName(string $value)
+ * @method ChatEndData setVisitorEmail(string $value)
  */
 
 class ChatEndData extends AbstractDTO {

@@ -208,8 +208,9 @@ class ChatEndTest extends WebTestCase {
      * @dataProvider malformedWebhookJson
      */
     public function testParseChatWebhookThrowsExceptionForMalformedRequests($jsonString) {
+        $chatEndData = new ChatEndData();
         $this->expectException(ChatException::class);
-        $this->chatEndService->parseChatWebhook($jsonString);
+        $this->chatEndService->parseChatWebhook($jsonString, $chatEndData);
     }
 
 
@@ -667,7 +668,8 @@ class ChatEndTest extends WebTestCase {
      */
     public function testParseChatEndWebhookParsesRequiredFields() {
         /** @var ChatEndData $chatEndData */
-        $chatEndData = $this->chatEndService->parseChatWebhook('{
+        $chatEndData = new ChatEndData();
+        $this->chatEndService->parseChatWebhook('{
     "event_type": "chat_ended",
     "event_unique_id": "8dd982355fdae65ded2d44a99f2243e8",
     "token": "710747eff1dee5b3bbeb97186394b8c0",
@@ -747,7 +749,7 @@ class ChatEndTest extends WebTestCase {
             "answer": "tanderson@metacortex.com"
         }
     ]
-}');
+}', $chatEndData);
 
         $this->assertEquals('tanderson@metacortex.com', $chatEndData->getVisitorEmail());
         $this->assertEquals('Thomas Anderson', $chatEndData->getVisitorName());
