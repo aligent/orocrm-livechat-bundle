@@ -2,6 +2,7 @@
 
 namespace Aligent\LiveChatBundle\Tests\Unit\Service\Webhook;
 
+use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
 use Oro\Bundle\ContactBundle\Entity\Contact;
 use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -665,7 +666,8 @@ class ChatEndTest extends WebTestCase {
      * and in full.
      */
     public function testParseChatEndWebhookParsesRequiredFields() {
-        $this->chatEndService->parseChatWebhook('{
+        /** @var ChatEndData $chatEndData */
+        $chatEndData = $this->chatEndService->parseChatWebhook('{
     "event_type": "chat_ended",
     "event_unique_id": "8dd982355fdae65ded2d44a99f2243e8",
     "token": "710747eff1dee5b3bbeb97186394b8c0",
@@ -747,16 +749,16 @@ class ChatEndTest extends WebTestCase {
     ]
 }');
 
-        $this->assertEquals('tanderson@metacortex.com', $this->chatEndService->visitorEmail);
-        $this->assertEquals('Thomas Anderson', $this->chatEndService->visitorName);
-        $this->assertEquals('Agent Smith', $this->chatEndService->agentName);
-        $this->assertEquals('smith@thematrix.com.au', $this->chatEndService->agentEmail);
-        $this->assertEquals(['smith@thematrix.com.au', 'smith2@thematrix.com.au'], $this->chatEndService->agents);
-        $this->assertEquals('OQ422UEDW5', $this->chatEndService->chatId);
-        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $this->chatEndService->chatStart->format(\DATE_RFC2822));
-        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $this->chatEndService->chatEnd->format(\DATE_RFC2822));
-        $this->assertNotNull($this->chatEndService->transcript);
-        $this->assertJson($this->chatEndService->transcript);
+        $this->assertEquals('tanderson@metacortex.com', $chatEndData->getVisitorEmail());
+        $this->assertEquals('Thomas Anderson', $chatEndData->getVisitorName());
+        $this->assertEquals('Agent Smith', $chatEndData->getAgentName());
+        $this->assertEquals('smith@thematrix.com.au', $chatEndData->getAgentEmail());
+        $this->assertEquals(['smith@thematrix.com.au', 'smith2@thematrix.com.au'], $chatEndData->getAgents());
+        $this->assertEquals('OQ422UEDW5', $chatEndData->getChatId());
+        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $chatEndData->getChatStart()->format(\DATE_RFC2822));
+        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $chatEndData->getChatEnd()->format(\DATE_RFC2822));
+        $this->assertNotNull($chatEndData->getTranscript());
+        $this->assertJson($chatEndData->getTranscript());
     }
 
 }

@@ -39,7 +39,7 @@ abstract class ChatEventAbstract {
         $this->jsonEncoder = $jsonEncoder;
         $this->contactManager = $contactManager;
 
-        $this->logger->debug("Webhook ChatEnd service initialized.");
+        $this->logger->debug("Webhook ChatAbstract service initialized.");
     }
 
     /**
