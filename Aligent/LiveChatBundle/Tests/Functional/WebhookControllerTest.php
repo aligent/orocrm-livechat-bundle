@@ -21,6 +21,7 @@ class WebhookControllerTest extends WebTestCase {
      */
     public function testChatStartEnforcesHttpBasicAuth() {
         $client = static::createClient();
+        $client->setServerParameter('HTTPS', true);
         $client->request('POST', '/livechatinc/webhook/chatStart');
 
         $this->assertEquals(401, $client->getResponse()->getStatusCode());
@@ -32,6 +33,7 @@ class WebhookControllerTest extends WebTestCase {
      */
     public function testChatEndEnforcesHttpBasicAuth() {
         $client = static::createClient();
+        $client->setServerParameter('HTTPS', true);
         $client->request('POST', '/livechatinc/webhook/chatEnd');
 
         $this->assertEquals(401, $client->getResponse()->getStatusCode());
