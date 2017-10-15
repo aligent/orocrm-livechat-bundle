@@ -33,10 +33,21 @@ Installation Instructions
         composer require aligent/orocrm-livechat-bundle
 
 1. Clear cache and run migrations
-1. Set a password for the webhook via the Oro System Configuration
-1. Log into your LiveChat web interface.  Go to Settings (gear icon in top right), Integrations, Webhooks., 
-    1. Create a webhook for the "chat_started" event (leave all options ticked) using the following URL: <https://livechatinc:[PasswordYouSetInStep2]@[YourDomainHere]/livechatinc/webhook/chatStart>
-    1. Create a webhook for the "chat_ended" event (leave all options ticked) using the following URL: <https://livechatinc:[PasswordYouSetInStep2]@[YourDomainHere]/livechatinc/webhook/chatEnd>
+        
+        php app/console cache:clear --env=prod
+        php app/console oro:migration:load --force --env=prod
+        
+1. Set a username and password for the webhook via the Oro System Configuration.  
+Go to "System" then "Configuration".  Select "Live Chat Configuration" under 
+"General Setup".  Enter a user name and password (note these settings for later) 
+and click "Save". 
+
+1. Log into your LiveChat web interface.  Go to "Settings" (gear icon in top 
+right), then "Integrations", and select "Webhooks", 
+    1. Create a webhook for the "chat_started" event (leave all options ticked) 
+    using the following URL: <https://livechatinc:[PasswordYouSetInStep2]@[YourDomainHere]/livechatinc/webhook/chatStart>
+    1. Create a webhook for the "chat_ended" event (leave all options ticked) 
+    using the following URL: <https://livechatinc:[PasswordYouSetInStep2]@[YourDomainHere]/livechatinc/webhook/chatEnd>
 
 
 Support
