@@ -1,6 +1,6 @@
 <?php
 
-namespace Aligent\LiveChatBundle\Tests\Unit\DataFixtures;
+namespace Aligent\LiveChatBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;

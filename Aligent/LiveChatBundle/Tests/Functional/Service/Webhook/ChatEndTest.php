@@ -1,6 +1,6 @@
 <?php
 
-namespace Aligent\LiveChatBundle\Tests\Unit\Service\Webhook;
+namespace Aligent\LiveChatBundle\Tests\Functional\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
 use Oro\Bundle\ContactBundle\Entity\Contact;
@@ -29,6 +29,8 @@ class ChatEndTest extends WebTestCase {
     protected $chatEndService;
 
     protected function setUp() {
+        parent::setUp();
+
         $this->initClient();
 
         $this->loadFixtures([

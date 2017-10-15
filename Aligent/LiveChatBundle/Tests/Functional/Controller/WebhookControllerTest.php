@@ -1,6 +1,6 @@
 <?php
 
-namespace Aligent\LiveChatBundle\Tests\Functional;
+namespace Aligent\LiveChatBundle\Tests\Functional\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
