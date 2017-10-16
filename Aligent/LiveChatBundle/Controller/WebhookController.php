@@ -27,13 +27,13 @@ class WebhookController extends Controller {
      * @Route("/chatStart")
      * @return Response
      */
-    public function chatStartAction() {
+    public function chatStartAction(Request $request) {
         if (!$this->hasHttpBasicAuthentication()) {
             return new Response('Unauthorized', 401, ['WWW-Authenticate' => 'Basic realm="LiveChat Webhooks"'] );
         }
 
         try {
-            $this->get('livechat.webhook_chatstart')->handleRequest($this->getRequest()->getContent());
+            $this->get('livechat.webhook_chatstart')->handleRequest($request->getContent());
             return new Response("Success", 200);
         } catch (ChatException $e) {
             return new Response($e->getMessage(), 500);
@@ -45,13 +45,13 @@ class WebhookController extends Controller {
      * @Route("/chatEnd")
      * @return Response
      */
-    public function chatEndAction() {
+    public function chatEndAction(Request $request) {
         if (!$this->hasHttpBasicAuthentication()) {
             return new Response('Unauthorized', 401, ['WWW-Authenticate' => 'Basic realm="LiveChat Webhooks"'] );
         }
 
         try {
-            $this->get('livechat.webhook_chatend')->handleRequest($this->getRequest()->getContent());
+            $this->get('livechat.webhook_chatend')->handleRequest($request->getContent());
             return new Response("Success", 200);
         } catch (ChatException $e) {
             return new Response($e->getMessage(), 500);
