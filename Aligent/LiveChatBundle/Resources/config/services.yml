@@ -2,9 +2,7 @@ parameters:
     livechat.chattranscript.entity.class:            Aligent\LiveChatBundle\Entity\ChatTranscript
     livechat.chattranscript.activity.manager.class:  Aligent\LiveChatBundle\Entity\Manager\ChatTranscriptManager
     livechat.activity_list.provider.class:           Aligent\LiveChatBundle\Provider\ChatActivityListProvider
-    livechat.listener.entity_listener.class:         Aligent\LiveChatBundle\EventListener\EntityListener
     livechat.listener.config_listener.class:         Aligent\LiveChatBundle\EventListener\ConfigListener
-
     livechat.security.encoder.bcrypt.cost: 10
 
 services:
@@ -79,13 +77,6 @@ services:
            - "@livechat.webhook_transcriptparser"
         tags:
            - {name: oro_activity_list.provider, priority: 10 }
-
-    livechat.listener.entity_listener:
-        class: %livechat.listener.entity_listener.class%
-        arguments:
-            - "@livechat.chattranscript.activity.manager"
-        tags:
-            - { name: doctrine.event_listener, event: onFlush }
 
     livechat.listener.system_config:
       class: %livechat.listener.config_listener.class%
