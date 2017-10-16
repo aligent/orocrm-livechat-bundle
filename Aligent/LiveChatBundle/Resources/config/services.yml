@@ -38,7 +38,6 @@ services:
           - '@livechat.repository.contact'
           - "@livechat.webhook_transcriptparser"
           - '@livechat.repository.user'
-          - "@livechat.repository.chattranscript"
           - "@doctrine.orm.entity_manager"
           - "@oro_activity.manager"
 
@@ -55,12 +54,6 @@ services:
         class: 'Aligent\LiveChatBundle\Entity\Repository\UserRepository'
         arguments:
             - '@oro_user.manager'
-
-    livechat.repository.chattranscript:
-        class: 'Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository'
-        parent: oro_entity.abstract_repository
-        arguments:
-            - %livechat.chattranscript.entity.class%
 
     livechat.chattranscript.activity.manager:
         class: '%livechat.chattranscript.activity.manager.class%'

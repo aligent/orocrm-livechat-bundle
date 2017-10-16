@@ -3,6 +3,7 @@
 namespace Aligent\LiveChatBundle\Tests\Functional\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
+use Aligent\LiveChatBundle\Entity\ChatTranscript;
 use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
 use Aligent\LiveChatBundle\Service\Webhook\ChatException;
 use Oro\Bundle\ContactBundle\Entity\Contact;
@@ -185,7 +186,7 @@ class ChatEndTest extends WebTestCase {
         $owner = $this->getReference(LoadUserData::SIMPLE_USER);
 
         /** @var ChatTranscriptRepository $transcriptRepo */
-        $transcriptRepo = $this->getContainer()->get('livechat.repository.chattranscript');
+        $transcriptRepo = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository(ChatTranscript::class);
         $transcript = $transcriptRepo->findTranscriptByLiveChatId('OQ422UEDW5');
 
         $this->assertNotNull($transcript);

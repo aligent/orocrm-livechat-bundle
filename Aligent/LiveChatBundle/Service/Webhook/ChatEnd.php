@@ -50,13 +50,12 @@ class ChatEnd extends ChatEventAbstract {
         ContactRepository $contactRepo,
         TranscriptParser $transcriptParser,
         UserRepository $userRepo,
-        ChatTranscriptRepository $transcriptRepository,
         ObjectManager $manager,
         ActivityManager $activityManager
     ) {
         parent::__construct($logger, $jsonEncoder, $contactRepo);
         $this->transcriptParser = $transcriptParser;
-        $this->transcriptRepository = $transcriptRepository;
+        $this->transcriptRepository = $manager->getRepository(ChatTranscript::class);;
         $this->userRepo = $userRepo;
         $this->manager = $manager;
         $this->activityManager = $activityManager;

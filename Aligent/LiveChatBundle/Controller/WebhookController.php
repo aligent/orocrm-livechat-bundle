@@ -117,6 +117,7 @@ class WebhookController extends Controller {
         return $valid;
     }
 
+
     /**
      * Manually process the $_SERVER['Authenticated'] superglobal into username
      * and password because PHP-FPM.
