@@ -11,9 +11,6 @@ datagrids:
                     - t.chatStart
                 from:
                     - { table: %livechat.chattranscript.entity.class%, alias: t }
-                #join:
-                #    left:
-                #        - { join: t.priority, alias: priority }
         columns:
             id:
                 label: aligent.livechat.chattranscript.id.label
