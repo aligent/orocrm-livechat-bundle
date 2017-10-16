@@ -5,9 +5,8 @@ namespace Aligent\LiveChatBundle\Service\Webhook;
 use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
 use Aligent\LiveChatBundle\DataTransfer\ChatStartData;
 use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
-use Psr\Log\LoggerInterface;
 use Aligent\LiveChatBundle\Service\API\Client\Visitor;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 

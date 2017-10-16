@@ -9,9 +9,9 @@
 namespace Aligent\LiveChatBundle\Entity\Repository;
 
 
-use Oro\Bundle\UserBundle\Entity\UserManager;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\UserBundle\Entity\UserManager;
 
 class UserRepository {
 

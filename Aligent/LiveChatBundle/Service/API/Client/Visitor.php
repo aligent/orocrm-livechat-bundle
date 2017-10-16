@@ -5,10 +5,10 @@ namespace Aligent\LiveChatBundle\Service\API\Client;
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\Response;
 use Oro\Bundle\ContactBundle\Entity\Contact;
-use Symfony\Component\Translation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Service class for accessing "visitor" API

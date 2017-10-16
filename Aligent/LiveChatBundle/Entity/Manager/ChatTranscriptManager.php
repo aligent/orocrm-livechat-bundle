@@ -2,11 +2,10 @@
 
 namespace Aligent\LiveChatBundle\Entity\Manager;
 
+use Aligent\LiveChatBundle\Entity\ChatTranscript;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
-use Aligent\LiveChatBundle\Entity\ChatTranscript;
 
 /**
  * Transcript entity manager

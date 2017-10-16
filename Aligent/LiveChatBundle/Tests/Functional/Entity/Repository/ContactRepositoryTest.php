@@ -3,8 +3,8 @@
 namespace Aligent\LiveChatBundle\Tests\Functional\Entity\Repository;
 
 use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ContactRepositoryTest extends WebTestCase {
 

@@ -3,12 +3,10 @@
 namespace Aligent\LiveChatBundle\Tests\Functional\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\ChatStartData;
-use Oro\Bundle\ContactBundle\Entity\Contact;
-use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Aligent\LiveChatBundle\Service\API\Client\Visitor;
 use Aligent\LiveChatBundle\Service\Webhook\ChatException;
 use Aligent\LiveChatBundle\Service\Webhook\ChatStart;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * Unit tests for Chat Start service

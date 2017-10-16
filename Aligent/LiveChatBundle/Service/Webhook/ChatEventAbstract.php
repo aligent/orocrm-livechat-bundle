@@ -4,9 +4,6 @@ namespace Aligent\LiveChatBundle\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
 use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
-use Doctrine\ORM\NoResultException;
-use Oro\Bundle\DotmailerBundle\Entity\Contact;
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;

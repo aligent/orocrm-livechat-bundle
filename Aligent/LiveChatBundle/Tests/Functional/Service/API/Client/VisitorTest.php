@@ -2,13 +2,9 @@
 
 namespace Aligent\LiveChatBundle\Tests\Functional\Service\API\Client;
 
-use Oro\Bundle\ContactBundle\Entity\Contact;
-use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Aligent\LiveChatBundle\Service\API\Client\Visitor;
-use Aligent\LiveChatBundle\Service\Webhook\ChatException;
-use Aligent\LiveChatBundle\Service\Webhook\ChatStart;
 use Aligent\LiveChatBundle\Tests\Functional\DataFixtures\LoadContactEnhancedEntities;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * Unit tests for Visitor service

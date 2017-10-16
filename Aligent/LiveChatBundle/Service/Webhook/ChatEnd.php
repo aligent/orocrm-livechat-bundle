@@ -4,19 +4,14 @@ namespace Aligent\LiveChatBundle\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
 use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
+use Aligent\LiveChatBundle\Entity\ChatTranscript;
+use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
 use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
 use Aligent\LiveChatBundle\Entity\Repository\UserRepository;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Entity\UserManager;
 use Psr\Log\LoggerInterface;
-use Aligent\LiveChatBundle\Entity\ChatTranscript;
-use Aligent\LiveChatBundle\Entity\Manager\ChatTranscriptManager;
-use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 

@@ -2,8 +2,8 @@
 
 namespace Aligent\LiveChatBundle\Entity\Repository;
 
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Doctrine\ORM\NoResultException;
+use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 
 class ContactRepository {
 

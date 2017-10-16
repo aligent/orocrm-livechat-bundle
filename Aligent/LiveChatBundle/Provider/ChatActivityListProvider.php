@@ -2,17 +2,17 @@
 
 namespace Aligent\LiveChatBundle\Provider;
 
+use Aligent\LiveChatBundle\Entity\ChatTranscript;
+use Aligent\LiveChatBundle\Service\Webhook\TranscriptParser;
 use Oro\Bundle\ActivityBundle\Tools\ActivityAssociationHelper;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
-use Oro\Bundle\ActivityListBundle\Model\ActivityListProviderInterface;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityOwner;
 use Oro\Bundle\ActivityListBundle\Model\ActivityListDateProviderInterface;
+use Oro\Bundle\ActivityListBundle\Model\ActivityListProviderInterface;
 use Oro\Bundle\CommentBundle\Model\CommentProviderInterface;
 use Oro\Bundle\CommentBundle\Tools\CommentAssociationHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink;
-use Aligent\LiveChatBundle\Entity\ChatTranscript;
-use Aligent\LiveChatBundle\Service\Webhook\TranscriptParser;
 
 /**
  * Chat Transcript Activity List Provider
