@@ -8,6 +8,7 @@ use Aligent\LiveChatBundle\Entity\ChatTranscript;
 use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
 use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
 use Aligent\LiveChatBundle\Entity\Repository\UserRepository;
+use Aligent\LiveChatBundle\Exception\ChatException;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\UserBundle\Entity\User;

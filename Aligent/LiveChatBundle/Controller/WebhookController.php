@@ -2,9 +2,10 @@
 
 namespace Aligent\LiveChatBundle\Controller;
 
-use Aligent\LiveChatBundle\Service\Webhook\ChatException;
+use Aligent\LiveChatBundle\Exception\ChatException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 

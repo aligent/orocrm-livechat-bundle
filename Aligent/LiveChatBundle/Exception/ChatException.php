@@ -1,6 +1,6 @@
 <?php
 
-namespace Aligent\LiveChatBundle\Service\Webhook;
+namespace Aligent\LiveChatBundle\Exception;
 
 /**
  * Exception thrown on Webhook validation errors

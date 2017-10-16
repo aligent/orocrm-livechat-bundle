@@ -5,7 +5,7 @@ namespace Aligent\LiveChatBundle\Tests\Functional\Service\Webhook;
 use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
 use Aligent\LiveChatBundle\Entity\ChatTranscript;
 use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
-use Aligent\LiveChatBundle\Service\Webhook\ChatException;
+use Aligent\LiveChatBundle\Exception\ChatException;
 use Oro\Bundle\ContactBundle\Entity\Contact;
 use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -209,7 +209,7 @@ class ChatEndTest extends WebTestCase {
      */
     public function testParseChatWebhookThrowsExceptionForMalformedRequests($jsonString) {
         $chatEndData = new ChatEndData();
-        $this->expectException(ChatException::class);
+        $this->expectException(\Aligent\LiveChatBundle\Exception\ChatException::class);
         $this->chatEndService->parseChatWebhook($jsonString, $chatEndData);
     }
 
