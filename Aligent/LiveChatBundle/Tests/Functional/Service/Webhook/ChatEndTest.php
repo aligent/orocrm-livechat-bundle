@@ -197,9 +197,8 @@ class ChatEndTest extends WebTestCase {
         $this->assertEquals($owner->getId(), $transcript->getOwner()->getId());
 
         // Assert other critical fields are set correctly...
-        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $this->chatEndService->chatStart->format(\DATE_RFC2822));
-        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $this->chatEndService->chatEnd->format(\DATE_RFC2822));
-        $this->assertNotNull($this->chatEndService->transcript);
+        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $transcript->getChatStart()->format(\DATE_RFC2822));
+        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $transcript->getChatEnd()->format(\DATE_RFC2822));
     }
 
 

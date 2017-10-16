@@ -29,7 +29,7 @@ services:
         arguments:
           - '@logger'
           - '@serializer.encoder.json'
-          - '@oro_contact.contact.manager'
+          - '@livechat.repository.contact'
           - '@livechat.api_client_visitor'
 
     livechat.webhook_chatend:
@@ -37,9 +37,9 @@ services:
         arguments:
           - '@logger'
           - '@serializer.encoder.json'
-          - '@oro_contact.contact.manager'
+          - '@livechat.repository.contact'
           - "@livechat.webhook_transcriptparser"
-          - "@oro_user.manager"
+          - '@livechat.repository.user'
           - "@livechat.repository.chattranscript"
           - "@doctrine.orm.entity_manager"
           - "@oro_activity.manager"
@@ -47,6 +47,16 @@ services:
     livechat.webhook_transcriptparser:
         class: Aligent\LiveChatBundle\Service\Webhook\TranscriptParser
         arguments: ['@logger', '@serializer.encoder.json']
+
+    livechat.repository.contact:
+        class: 'Aligent\LiveChatBundle\Entity\Repository\ContactRepository'
+        arguments:
+            - '@oro_contact.contact.manager'
+
+    livechat.repository.user:
+        class: 'Aligent\LiveChatBundle\Entity\Repository\UserRepository'
+        arguments:
+            - '@oro_user.manager'
 
     livechat.repository.chattranscript:
         class: 'Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository'

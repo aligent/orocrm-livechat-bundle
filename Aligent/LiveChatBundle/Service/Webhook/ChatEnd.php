@@ -4,6 +4,8 @@ namespace Aligent\LiveChatBundle\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
 use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
+use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
+use Aligent\LiveChatBundle\Entity\Repository\UserRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\QueryBuilder;
@@ -38,30 +40,29 @@ class ChatEnd extends ChatEventAbstract {
     /** @var ChatTranscriptRepository  */
     protected $transcriptRepository;
 
-    /** @var UserManager  */
-    protected $userManager;
-
     /** @var ObjectManager  */
     protected $manager;
 
     /** @var ActivityManager */
     protected $activityManager;
 
+    /** @var  UserRepository */
+    protected $userRepo;
 
     public function __construct(
         LoggerInterface $logger,
         JsonEncoder $jsonEncoder,
-        ApiEntityManager $contactManager,
+        ContactRepository $contactRepo,
         TranscriptParser $transcriptParser,
-        UserManager $userManager,
+        UserRepository $userRepo,
         ChatTranscriptRepository $transcriptRepository,
         ObjectManager $manager,
         ActivityManager $activityManager
     ) {
-        parent::__construct($logger, $jsonEncoder, $contactManager);
+        parent::__construct($logger, $jsonEncoder, $contactRepo);
         $this->transcriptParser = $transcriptParser;
         $this->transcriptRepository = $transcriptRepository;
-        $this->userManager = $userManager;
+        $this->userRepo = $userRepo;
         $this->manager = $manager;
         $this->activityManager = $activityManager;
 
@@ -77,8 +78,8 @@ class ChatEnd extends ChatEventAbstract {
 
         $this->parseChatWebhook($jsonString, $chatEndData);
 
-        $contact = $this->getContactFromChatEvent($chatEndData->getVisitorEmail());
-        $users = $this->getUsersForAgents($chatEndData->getAgents());
+        $contact = $this->contactRepo->getContactForEmail($chatEndData->getVisitorEmail());
+        $users = $this->userRepo->getUsersForAgents($chatEndData->getAgents());
 
         $this->persistTranscript($chatEndData, $contact, $users);
     }
@@ -194,37 +195,6 @@ class ChatEnd extends ChatEventAbstract {
         }
 
         $chatEndData->setAgents($parsed);
-    }
-
-
-    /**
-     * Fetch all of the mathcing user accounts for the agents involved in the
-     * chat.
-     *
-     * @param $agents array Array of agent email addresses
-     * @return array Array of user objects
-     */
-    protected function getUsersForAgents($agents) {
-        if (count($agents) == 0) {
-            $users = [];
-        } else {
-            /** @var QueryBuilder $qb */
-            $qb = $this->userManager->getRepository()->createQueryBuilder('u');
-
-            $criteria     = new Criteria();
-            $criteria->where(Criteria::expr()->in('email', $agents));
-            $qb->addCriteria($criteria);
-
-            $users = $qb->getQuery()->getResult();
-        }
-
-        if (count($users) == 0) {
-            $qb = $this->userManager->getRepository()->createQueryBuilder('u');
-            $qb->setMaxResults(1);
-            $users = $qb->getQuery()->getResult();
-        }
-
-        return $users;
     }
 
 

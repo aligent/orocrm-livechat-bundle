@@ -4,6 +4,7 @@ namespace Aligent\LiveChatBundle\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
 use Aligent\LiveChatBundle\DataTransfer\ChatStartData;
+use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Psr\Log\LoggerInterface;
 use Aligent\LiveChatBundle\Service\API\Client\Visitor;
@@ -27,9 +28,12 @@ class ChatStart extends ChatEventAbstract {
 
     const EVENT_TYPE = 'chat_started';
 
-    public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, ApiEntityManager $contactManager, Visitor $visitor) {
+    public function __construct(LoggerInterface $logger,
+                                JsonEncoder $jsonEncoder,
+                                ContactRepository $contactRepo,
+                                Visitor $visitor) {
         $this->visitorApi = $visitor;
-        parent::__construct($logger, $jsonEncoder, $contactManager);
+        parent::__construct($logger, $jsonEncoder, $contactRepo);
 
         $this->logger->debug("Webhook ChatStart service initialized.");
     }
@@ -46,7 +50,7 @@ class ChatStart extends ChatEventAbstract {
 
         $this->parseChatWebhook($jsonString, $chatStartData);
 
-        $contact = $this->getContactFromChatEvent($chatStartData->getVisitorEmail());
+        $contact = $this->contactRepo->getContactForEmail($chatStartData->getVisitorEmail());
         if ($contact !== null) {
             $this->logger->info("Sending visitor API call for ". $contact->getEmail());
 

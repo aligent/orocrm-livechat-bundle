@@ -63,7 +63,7 @@ class ChatStartTest extends WebTestCase {
         $mockedApiChatService = new ChatStart(
             $this->getContainer()->get('logger'),
             $this->getContainer()->get('serializer.encoder.json'),
-            $this->getContainer()->get('oro_contact.contact.manager'),
+            $this->getContainer()->get('livechat.repository.contact'),
             $visitorApiMock
         );
 
@@ -119,37 +119,4 @@ class ChatStartTest extends WebTestCase {
         $this->assertEquals('8762851', $chatStartData->getApiLicenseId());
     }
 
-
-    /**
-     * Test that the contact lookup function finds the correct contact, and returns
-     * the appropriate sentinel when contact is not found.
-     *
-     * @dataProvider contactProvider
-     *
-     * @param $chatEmail string Email address to search for
-     * @param $expectedContactReference null|string Contact expected to be found
-     */
-    public function testGetContactFromChatEvent($chatEmail, $expectedContactReference) {
-        $actualContact = $this->chatStartService->getContactFromChatEvent($chatEmail);
-        if ($expectedContactReference === null) {
-            $this->assertNull($actualContact);
-        } else {
-            $expectedContact = $this->getReference($expectedContactReference);
-            $this->assertEquals($expectedContact->getId(), $actualContact->getId());
-        }
-    }
-
-
-    /**
-     * Data provider for contact data.
-     *
-     * @return array
-     */
-    public function contactProvider() {
-        return [
-            ['test1@test.test', 'Contact_' . LoadContactEntitiesData::FIRST_ENTITY_NAME],
-                                                // Valid contact from fixture data
-            ['jim@aligent.com.au', null],       // Real person, just not in fixtures!
-        ];
-    }
 }

@@ -3,6 +3,7 @@
 namespace Aligent\LiveChatBundle\Service\Webhook;
 
 use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
+use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
 use Doctrine\ORM\NoResultException;
 use Oro\Bundle\DotmailerBundle\Entity\Contact;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
@@ -22,8 +23,8 @@ use Symfony\Component\Serializer\Exception\UnexpectedValueException;
  **/
 abstract class ChatEventAbstract {
 
-    /** @var ApiEntityManager  */
-    protected $contactManager;
+    /** @var ContactRepository  */
+    protected $contactRepo;
     /** @var JsonEncoder  */
     protected $jsonEncoder;
     /** @var LoggerInterface  */
@@ -35,10 +36,10 @@ abstract class ChatEventAbstract {
 
     const INDEX_EVENT_TYPE = 'event_type';
 
-    public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, ApiEntityManager $contactManager) {
+    public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, ContactRepository $contactRepo) {
         $this->logger = $logger;
         $this->jsonEncoder = $jsonEncoder;
-        $this->contactManager = $contactManager;
+        $this->contactRepo = $contactRepo;
 
         $this->logger->debug("Webhook ChatAbstract service initialized.");
     }
@@ -99,30 +100,4 @@ abstract class ChatEventAbstract {
     }
 
 
-    /**
-     * Lookup contact based on email address.  Swallow the exception and return
-     * a sentinel if not found (which is quite likely for guest chats).
-     *
-     * @param $email string Contact email address
-     * @return null|Contact
-     */
-    public function getContactFromChatEvent($email) {
-        $qb = $this->contactManager->getRepository()
-            ->createQueryBuilder('c')
-            ->join('c.emails', 'e');
-
-        $qb->andWhere(
-            $qb->expr()->eq('e.email', ':query')
-        )->setParameter('query', $email)
-            ->setMaxResults(1);
-
-        try {
-            $contact = $qb->getQuery()->getSingleResult();
-        } catch (NoResultException $e) {
-            // If not a known contact, then swallow the exception and return a
-            // sentinel value instead.
-            $contact = null;
-        }
-        return $contact;
-    }
 }
