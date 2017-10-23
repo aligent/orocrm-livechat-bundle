@@ -2,11 +2,10 @@
 
 namespace Aligent\LiveChatBundle\Entity\Manager;
 
+use Aligent\LiveChatBundle\Entity\ChatTranscript;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
-use Aligent\LiveChatBundle\Entity\ChatTranscript;
 
 /**
  * Transcript entity manager
@@ -68,7 +67,7 @@ class ChatTranscriptManager {
 
         $changedEntities = $uow->getScheduledEntityUpdates();
         foreach ($changedEntities as $entity) {
-            if ($entity instanceof Call) {
+            if ($entity instanceof ChatTranscript) {
                 $hasChanges = false;
                 $changeSet  = $uow->getEntityChangeSet($entity);
                 foreach ($changeSet as $field => $values) {

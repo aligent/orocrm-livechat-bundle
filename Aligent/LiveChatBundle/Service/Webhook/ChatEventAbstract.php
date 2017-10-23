@@ -2,9 +2,9 @@
 
 namespace Aligent\LiveChatBundle\Service\Webhook;
 
-use Doctrine\ORM\NoResultException;
-use Oro\Bundle\DotmailerBundle\Entity\Contact;
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
+use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
+use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
+use Aligent\LiveChatBundle\Exception\ChatException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
@@ -21,8 +21,8 @@ use Symfony\Component\Serializer\Exception\UnexpectedValueException;
  **/
 abstract class ChatEventAbstract {
 
-    /** @var ApiEntityManager  */
-    protected $contactManager;
+    /** @var ContactRepository  */
+    protected $contactRepo;
     /** @var JsonEncoder  */
     protected $jsonEncoder;
     /** @var LoggerInterface  */
@@ -34,12 +34,12 @@ abstract class ChatEventAbstract {
 
     const INDEX_EVENT_TYPE = 'event_type';
 
-    public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, ApiEntityManager $contactManager) {
+    public function __construct(LoggerInterface $logger, JsonEncoder $jsonEncoder, ContactRepository $contactRepo) {
         $this->logger = $logger;
         $this->jsonEncoder = $jsonEncoder;
-        $this->contactManager = $contactManager;
+        $this->contactRepo = $contactRepo;
 
-        $this->logger->debug("Webhook ChatEnd service initialized.");
+        $this->logger->debug("Webhook ChatAbstract service initialized.");
     }
 
     /**
@@ -54,14 +54,15 @@ abstract class ChatEventAbstract {
      * Extract the required fields from the chat event request payload.
      *
      * @param $jsonString
+     * @param AbstractDTO $dto A data transfer object for the parsed data
      * @throws ChatException
      * @return array Parsed JSON data for further procesing in child classes
      */
-    public function parseChatWebhook($jsonString) {
+    public function parseChatWebhook($jsonString, AbstractDTO $dto) {
         $jsonData = $this->decodeAndValidateWebhook($jsonString);
 
         if (isset($jsonData['visitor']['email'])) {
-            $this->visitorEmail = $jsonData['visitor']['email'];
+            $dto->setVisitorEmail($jsonData['visitor']['email']);
         } else {
             $this->logger->error("Malformed chat webhook.  Email field is missing.");
             throw new ChatException("Malformed chat webhook.  Email field is missing.");
@@ -97,30 +98,4 @@ abstract class ChatEventAbstract {
     }
 
 
-    /**
-     * Lookup contact based on email address.  Swallow the exception and return
-     * a sentinel if not found (which is quite likely for guest chats).
-     *
-     * @param $email string Contact email address
-     * @return null|Contact
-     */
-    public function getContactFromChatEvent($email) {
-        $qb = $this->contactManager->getRepository()
-            ->createQueryBuilder('c')
-            ->join('c.emails', 'e');
-
-        $qb->andWhere(
-            $qb->expr()->like('e.email', ':query')
-        )->setParameter('query', sprintf('%%%s%%', $email))
-            ->setMaxResults(1);
-
-        try {
-            $contact = $qb->getQuery()->getSingleResult();
-        } catch (NoResultException $e) {
-            // If not a known contact, then swallow the exception and return a
-            // sentinel value instead.
-            $contact = null;
-        }
-        return $contact;
-    }
 }

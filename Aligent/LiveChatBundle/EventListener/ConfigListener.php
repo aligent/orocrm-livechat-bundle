@@ -3,7 +3,7 @@
 namespace Aligent\LiveChatBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 
 /**
  * System Configuration listener
@@ -16,10 +16,10 @@ use Oro\Bundle\SecurityBundle\Encoder\Mcrypt;
  * @link      http://www.aligent.com.au/
  */
 class ConfigListener {
-    protected $encryptor;
+    protected $encoder;
 
-    public function __construct(Mcrypt $encryptor) {
-        $this->encryptor = $encryptor;
+    public function __construct(BCryptPasswordEncoder $encoder) {
+        $this->encoder = $encoder;
     }
 
     /**
@@ -30,7 +30,11 @@ class ConfigListener {
 
         if (isset($settings['aligent_live_chat.webhook_password'])) {
             $value = $settings['aligent_live_chat.webhook_password']['value'];
-            $settings['aligent_live_chat.webhook_password']['value'] = $this->encryptor->encryptData($value);
+            if ($value !== null) {
+                $settings['aligent_live_chat.webhook_password']['value'] = $this->encoder->encodePassword($value, false);
+            } else {
+                unset($settings['aligent_live_chat.webhook_password']);
+            }
         }
 
         $event->setSettings($settings);

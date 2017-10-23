@@ -1,13 +1,12 @@
 <?php
 
-namespace Aligent\LiveChatBundle\Tests\Unit\Service\Webhook;
+namespace Aligent\LiveChatBundle\Tests\Functional\Service\Webhook;
 
-use Oro\Bundle\ContactBundle\Entity\Contact;
-use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Aligent\LiveChatBundle\DataTransfer\ChatStartData;
 use Aligent\LiveChatBundle\Service\API\Client\Visitor;
-use Aligent\LiveChatBundle\Service\Webhook\ChatException;
+use Aligent\LiveChatBundle\Exception\ChatException;
 use Aligent\LiveChatBundle\Service\Webhook\ChatStart;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * Unit tests for Chat Start service
@@ -25,6 +24,8 @@ class ChatStartTest extends WebTestCase {
     protected $chatStartService;
 
     protected function setUp() {
+        parent::setUp();
+
         $this->initClient();
 
         $this->loadFixtures([
@@ -60,7 +61,7 @@ class ChatStartTest extends WebTestCase {
         $mockedApiChatService = new ChatStart(
             $this->getContainer()->get('logger'),
             $this->getContainer()->get('serializer.encoder.json'),
-            $this->getContainer()->get('oro_contact.contact.manager'),
+            $this->getContainer()->get('livechat.repository.contact'),
             $visitorApiMock
         );
 
@@ -75,8 +76,9 @@ class ChatStartTest extends WebTestCase {
      * @dataProvider malformedWebhookJson
      */
     public function testParseChatWebhookThrowsExceptionForMalformedRequests($jsonString) {
-        $this->expectException(ChatException::class);
-        $this->chatStartService->parseChatWebhook($jsonString);
+        $chatStartData = new ChatStartData();
+        $this->expectException(\Aligent\LiveChatBundle\Exception\ChatException::class);
+        $this->chatStartService->parseChatWebhook($jsonString, $chatStartData);
     }
 
 
@@ -105,45 +107,14 @@ class ChatStartTest extends WebTestCase {
      * and in full.
      */
     public function testParseChatStartWebhookParsesRequiredFields() {
-        $this->chatStartService->parseChatWebhook('{"event_type":"chat_started","event_unique_id":"c3b47e2f0525d0e669a0af23898050b8","token":"d31e8942603a5a8ca363dce9a8cff403","license_id":"8762851","chat":{"id":"OPNPVYYWEX","started_timestamp":1494390273,"url":"http://local.aligent.com/","messages":[{"user_type":"agent","author_name":"Jim O\'Halloran","agent_id":"test1@test.test","text":"Hello. How may I help you?","timestamp":1494390273}],"attachments":[],"events":[],"agents":[{"name":"Jim O\'Halloran","login":"test1@test.test"}],"tags":[],"groups":[0]},"visitor":{"id":"S1493177572.a78cd5f8c4","name":"Jim O\'Halloran","email":"test1@test.test","country":"Australia","city":"Adelaide","language":"en","page_current":"http://local.aligent.com/","timezone":"Australia/South"},"pre_chat_survey":[{"id":"2001","type":"name","label":"Name:","answer":"Jim O\'Halloran"},{"id":"2002","type":"email","label":"E-mail:","answer":"test1@test.test"}]}');
+        /** @var ChatStartData $chatStartData */
+        $chatStartData = new ChatStartData();
+        $this->chatStartService->parseChatWebhook('{"event_type":"chat_started","event_unique_id":"c3b47e2f0525d0e669a0af23898050b8","token":"d31e8942603a5a8ca363dce9a8cff403","license_id":"8762851","chat":{"id":"OPNPVYYWEX","started_timestamp":1494390273,"url":"http://local.aligent.com/","messages":[{"user_type":"agent","author_name":"Jim O\'Halloran","agent_id":"test1@test.test","text":"Hello. How may I help you?","timestamp":1494390273}],"attachments":[],"events":[],"agents":[{"name":"Jim O\'Halloran","login":"test1@test.test"}],"tags":[],"groups":[0]},"visitor":{"id":"S1493177572.a78cd5f8c4","name":"Jim O\'Halloran","email":"test1@test.test","country":"Australia","city":"Adelaide","language":"en","page_current":"http://local.aligent.com/","timezone":"Australia/South"},"pre_chat_survey":[{"id":"2001","type":"name","label":"Name:","answer":"Jim O\'Halloran"},{"id":"2002","type":"email","label":"E-mail:","answer":"test1@test.test"}]}', $chatStartData);
 
-        $this->assertEquals('test1@test.test', $this->chatStartService->visitorEmail);
-        $this->assertEquals('S1493177572.a78cd5f8c4', $this->chatStartService->visitorId);
-        $this->assertEquals('d31e8942603a5a8ca363dce9a8cff403', $this->chatStartService->apiToken);
-        $this->assertEquals('8762851', $this->chatStartService->apiLicenseId);
+        $this->assertEquals('test1@test.test', $chatStartData->getVisitorEmail());
+        $this->assertEquals('S1493177572.a78cd5f8c4', $chatStartData->getVisitorId());
+        $this->assertEquals('d31e8942603a5a8ca363dce9a8cff403', $chatStartData->getApiToken());
+        $this->assertEquals('8762851', $chatStartData->getApiLicenseId());
     }
 
-
-    /**
-     * Test that the contact lookup function finds the correct contact, and returns
-     * the appropriate sentinel when contact is not found.
-     *
-     * @dataProvider contactProvider
-     *
-     * @param $chatEmail string Email address to search for
-     * @param $expectedContactReference null|string Contact expected to be found
-     */
-    public function testGetContactFromChatEvent($chatEmail, $expectedContactReference) {
-        $actualContact = $this->chatStartService->getContactFromChatEvent($chatEmail);
-        if ($expectedContactReference === null) {
-            $this->assertNull($actualContact);
-        } else {
-            $expectedContact = $this->getReference($expectedContactReference);
-            $this->assertEquals($expectedContact->getId(), $actualContact->getId());
-        }
-    }
-
-
-    /**
-     * Data provider for contact data.
-     *
-     * @return array
-     */
-    public function contactProvider() {
-        return [
-            ['test1@test.test', 'Contact_' . LoadContactEntitiesData::FIRST_ENTITY_NAME],
-                                                // Valid contact from fixture data
-            ['jim@aligent.com.au', null],       // Real person, just not in fixtures!
-        ];
-    }
 }

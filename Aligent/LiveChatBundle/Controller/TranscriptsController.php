@@ -4,13 +4,14 @@ namespace Aligent\LiveChatBundle\Controller;
 
 
 use Aligent\LiveChatBundle\Entity\ChatTranscript;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Transcripts cpntroller
+ * Transcripts controller
  *
  * @category  Aligent
  * @package   LiveChatBundle
@@ -29,7 +30,7 @@ class TranscriptsController extends Controller {
      * @AclAncestor("livechat_transcript_view")
      */
     public function indexAction() {
-        return array();
+        return [];
     }
 
 

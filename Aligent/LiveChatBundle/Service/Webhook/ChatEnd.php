@@ -2,17 +2,17 @@
 
 namespace Aligent\LiveChatBundle\Service\Webhook;
 
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Entity\UserManager;
-use Psr\Log\LoggerInterface;
+use Aligent\LiveChatBundle\DataTransfer\AbstractDTO;
+use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
 use Aligent\LiveChatBundle\Entity\ChatTranscript;
-use Aligent\LiveChatBundle\Entity\Manager\ChatTranscriptManager;
 use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
+use Aligent\LiveChatBundle\Entity\Repository\ContactRepository;
+use Aligent\LiveChatBundle\Entity\Repository\UserRepository;
+use Aligent\LiveChatBundle\Exception\ChatException;
+use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
+use Oro\Bundle\UserBundle\Entity\User;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 
@@ -36,50 +36,28 @@ class ChatEnd extends ChatEventAbstract {
     /** @var ChatTranscriptRepository  */
     protected $transcriptRepository;
 
-    /** @var UserManager  */
-    protected $userManager;
-
     /** @var ObjectManager  */
     protected $manager;
 
     /** @var ActivityManager */
     protected $activityManager;
 
-    /** @var string */
-    public $chatId = null;
-
-    /** @var \DateTime */
-    public $chatStart = null;
-
-    /** @var \DateTime */
-    public $chatEnd = null;
-
-    public $transcript = null;
-
-    public $agents = [];
-
-    /** @var User */
-    public $owner = null;
-
-    public $agentName = null;
-    public $agentEmail = null;
-    public $visitorName = null;
-
+    /** @var  UserRepository */
+    protected $userRepo;
 
     public function __construct(
         LoggerInterface $logger,
         JsonEncoder $jsonEncoder,
-        ApiEntityManager $contactManager,
+        ContactRepository $contactRepo,
         TranscriptParser $transcriptParser,
-        UserManager $userManager,
-        ChatTranscriptRepository $transcriptRepository,
+        UserRepository $userRepo,
         ObjectManager $manager,
         ActivityManager $activityManager
     ) {
-        parent::__construct($logger, $jsonEncoder, $contactManager);
+        parent::__construct($logger, $jsonEncoder, $contactRepo);
         $this->transcriptParser = $transcriptParser;
-        $this->transcriptRepository = $transcriptRepository;
-        $this->userManager = $userManager;
+        $this->transcriptRepository = $manager->getRepository(ChatTranscript::class);;
+        $this->userRepo = $userRepo;
         $this->manager = $manager;
         $this->activityManager = $activityManager;
 
@@ -91,12 +69,14 @@ class ChatEnd extends ChatEventAbstract {
      * @inheritdoc
      */
     public function handleRequest($jsonString) {
-        $this->parseChatWebhook($jsonString);
+        $chatEndData = new ChatEndData();
 
-        $contact = $this->getContactFromChatEvent($this->visitorEmail);
-        $users = $this->getUsersForAgents($this->agents);
+        $this->parseChatWebhook($jsonString, $chatEndData);
 
-        $this->persistTranscript($contact, $users);
+        $contact = $this->contactRepo->getContactForEmail($chatEndData->getVisitorEmail());
+        $users = $this->userRepo->getUsersForAgents($chatEndData->getAgents());
+
+        $this->persistTranscript($chatEndData, $contact, $users);
     }
 
 
@@ -104,10 +84,11 @@ class ChatEnd extends ChatEventAbstract {
      * Extract the required fields from the chatEnd request payload.
      *
      * @param $jsonString string Raw JSON from request
+     * @return array Parsed JSON data
      * @throws ChatException
      */
-    public function parseChatWebhook($jsonString) {
-        $jsonData = parent::parseChatWebhook($jsonString);
+    public function parseChatWebhook($jsonString, AbstractDTO $chatEndData) {
+        $jsonData = parent::parseChatWebhook($jsonString, $chatEndData);
 
         if ($this->hasNonEmptyKey('chat', $jsonData)) {
             $chat = $jsonData['chat'];
@@ -117,13 +98,13 @@ class ChatEnd extends ChatEventAbstract {
                 $this->hasNonEmptyKey('messages', $chat) &&
                 $this->hasNonEmptyKey('agents', $chat)) {
 
-                $this->chatId = $chat['id'];
-                $this->chatStart = new \DateTime('@'.$chat['started_timestamp']);
-                $this->chatEnd = new \DateTime('@'.$chat['ended_timestamp']);
+                $chatEndData
+                    ->setChatId($chat['id'])
+                    ->setChatStart(new \DateTime('@'.$chat['started_timestamp']))
+                    ->setChatEnd(new \DateTime('@'.$chat['ended_timestamp']))
+                    ->setTranscript($this->transcriptParser->parseApiData($chat['messages']));
 
-                $this->transcript = $this->transcriptParser->parseApiData($chat['messages']);
-
-                $this->parseAgents($chat['agents']);
+                $this->parseAgents($chat['agents'], $chatEndData);
             } else {
                 $this->parseError("Required chat fields missing.");
             }
@@ -134,7 +115,7 @@ class ChatEnd extends ChatEventAbstract {
         if ($this->hasNonEmptyKey('visitor', $jsonData)) {
             $visitor = $jsonData['visitor'];
             if ($this->hasNonEmptyKey('name', $visitor)) {
-                $this->visitorName = $visitor['name'];
+                $chatEndData->setVisitorName($visitor['name']);
             } else {
                 $this->parseError("Visitor name missing.");
             }
@@ -142,6 +123,7 @@ class ChatEnd extends ChatEventAbstract {
             $this->parseError("Visitor key missing");
         }
 
+        return $jsonData;
     }
 
 
@@ -182,12 +164,13 @@ class ChatEnd extends ChatEventAbstract {
     /**
      * Extract agent name and email data into local properties.
      *
-     * @param $agents
+     * @param array $agents Array of chat agents
+     * @param ChatEndData $chatEndData Chat data transfer object
      */
-    protected function parseAgents($agents) {
+    protected function parseAgents($agents, ChatEndData $chatEndData) {
         $parsed = [];
 
-        $this->agentName = null;
+        $chatEndData->setAgentName(null);
 
         foreach ($agents as $idx => $agent) {
             if ($this->hasNonEmptyKey('name', $agent) &&
@@ -195,42 +178,18 @@ class ChatEnd extends ChatEventAbstract {
 
                 // Capture email addresses for all agents, to link to all user accounts.
                 $parsed[] = $agent['login'];
-
-                // Capture name and email fir first agent for the chat transcript record.
-                if ($this->agentName === null) {
-                    $this->agentName = $agent['name'];
-                    $this->agentEmail = $agent['login'];
+                // Capture name and email for first agent for the chat transcript record.
+                if ($chatEndData->getAgentName(null) === null) {
+                    $chatEndData->setAgentName($agent['name']);
+                    $chatEndData->setAgentEmail($agent['login']);
                 }
+
             } else {
                 $this->parseError('Required agent fields missing at index: '.$idx);
             }
         }
 
-        $this->agents = $parsed;
-    }
-
-
-    /**
-     * Fetch all of the mathcing user accounts for the agents involved in the
-     * chat.
-     *
-     * @param $agents array Array of agent email addresses
-     * @return array Array of user objects
-     */
-    protected function getUsersForAgents($agents) {
-        if (count($agents) == 0) {
-            return [];
-        } else {
-            /** @var QueryBuilder $qb */
-            $qb = $this->userManager->getRepository()->createQueryBuilder('u');
-
-            $criteria     = new Criteria();
-            $criteria->where(Criteria::expr()->in('email', $agents));
-            $qb->addCriteria($criteria);
-
-            $users = $qb->getQuery()->getResult();
-            return $users;
-        }
+        $chatEndData->setAgents($parsed);
     }
 
 
@@ -238,26 +197,27 @@ class ChatEnd extends ChatEventAbstract {
      * Persist the parsed chat transcript to the database, linking to contact
      * and users as appropriate.
      *
+     * @param ChatEndData $chatEndData Chat DTO
      * @param $contact
      * @param $users
      */
-    protected function persistTranscript($contact, $users) {
+    protected function persistTranscript($chatEndData, $contact, $users) {
         $contexts = [];
 
         // Don't duplicate the transcript in the case where we get the webhook
         // repeatedly.
-        $chatTranscript = $this->transcriptRepository->findTranscriptByLiveChatId($this->chatId);
+        $chatTranscript = $this->transcriptRepository->findTranscriptByLiveChatId($chatEndData->getChatId());
         if ($chatTranscript === null) {
             $chatTranscript = new ChatTranscript();
         }
 
-        $chatTranscript->setAgentName($this->agentName)
-            ->setChatStart($this->chatStart)
-            ->setChatEnd($this->chatEnd)
-            ->setContactName($this->visitorName)
-            ->setEmail($this->visitorEmail)
-            ->setLivechatChatId($this->chatId)
-            ->setTranscript($this->transcript);
+        $chatTranscript->setAgentName($chatEndData->getAgentName())
+            ->setChatStart($chatEndData->getChatStart())
+            ->setChatEnd($chatEndData->getChatEnd())
+            ->setContactName($chatEndData->getVisitorName())
+            ->setEmail($chatEndData->getVisitorEmail())
+            ->setLivechatChatId($chatEndData->getChatId())
+            ->setTranscript($chatEndData->getTranscript());
 
         if ($contact !== null) {
             $chatTranscript->setContact($contact);

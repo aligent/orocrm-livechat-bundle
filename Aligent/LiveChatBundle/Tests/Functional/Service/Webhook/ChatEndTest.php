@@ -1,16 +1,16 @@
 <?php
 
-namespace Aligent\LiveChatBundle\Tests\Unit\Service\Webhook;
+namespace Aligent\LiveChatBundle\Tests\Functional\Service\Webhook;
 
+use Aligent\LiveChatBundle\DataTransfer\ChatEndData;
+use Aligent\LiveChatBundle\Entity\ChatTranscript;
+use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
+use Aligent\LiveChatBundle\Exception\ChatException;
 use Oro\Bundle\ContactBundle\Entity\Contact;
 use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Aligent\LiveChatBundle\Entity\Repository\ChatTranscriptRepository;
-use Aligent\LiveChatBundle\Service\API\Client\Visitor;
-use Aligent\LiveChatBundle\Service\Webhook\ChatException;
-use Aligent\LiveChatBundle\Service\Webhook\ChatEnd;
 
 /**
  * Unit tests for Chat End service
@@ -28,6 +28,8 @@ class ChatEndTest extends WebTestCase {
     protected $chatEndService;
 
     protected function setUp() {
+        parent::setUp();
+
         $this->initClient();
 
         $this->loadFixtures([
@@ -184,7 +186,7 @@ class ChatEndTest extends WebTestCase {
         $owner = $this->getReference(LoadUserData::SIMPLE_USER);
 
         /** @var ChatTranscriptRepository $transcriptRepo */
-        $transcriptRepo = $this->getContainer()->get('livechat.repository.chattranscript');
+        $transcriptRepo = $this->getContainer()->get('doctrine.orm.entity_manager')->getRepository(ChatTranscript::class);
         $transcript = $transcriptRepo->findTranscriptByLiveChatId('OQ422UEDW5');
 
         $this->assertNotNull($transcript);
@@ -194,9 +196,8 @@ class ChatEndTest extends WebTestCase {
         $this->assertEquals($owner->getId(), $transcript->getOwner()->getId());
 
         // Assert other critical fields are set correctly...
-        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $this->chatEndService->chatStart->format(\DATE_RFC2822));
-        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $this->chatEndService->chatEnd->format(\DATE_RFC2822));
-        $this->assertNotNull($this->chatEndService->transcript);
+        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $transcript->getChatStart()->format(\DATE_RFC2822));
+        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $transcript->getChatEnd()->format(\DATE_RFC2822));
     }
 
 
@@ -207,8 +208,9 @@ class ChatEndTest extends WebTestCase {
      * @dataProvider malformedWebhookJson
      */
     public function testParseChatWebhookThrowsExceptionForMalformedRequests($jsonString) {
-        $this->expectException(ChatException::class);
-        $this->chatEndService->parseChatWebhook($jsonString);
+        $chatEndData = new ChatEndData();
+        $this->expectException(\Aligent\LiveChatBundle\Exception\ChatException::class);
+        $this->chatEndService->parseChatWebhook($jsonString, $chatEndData);
     }
 
 
@@ -665,6 +667,8 @@ class ChatEndTest extends WebTestCase {
      * and in full.
      */
     public function testParseChatEndWebhookParsesRequiredFields() {
+        /** @var ChatEndData $chatEndData */
+        $chatEndData = new ChatEndData();
         $this->chatEndService->parseChatWebhook('{
     "event_type": "chat_ended",
     "event_unique_id": "8dd982355fdae65ded2d44a99f2243e8",
@@ -745,18 +749,18 @@ class ChatEndTest extends WebTestCase {
             "answer": "tanderson@metacortex.com"
         }
     ]
-}');
+}', $chatEndData);
 
-        $this->assertEquals('tanderson@metacortex.com', $this->chatEndService->visitorEmail);
-        $this->assertEquals('Thomas Anderson', $this->chatEndService->visitorName);
-        $this->assertEquals('Agent Smith', $this->chatEndService->agentName);
-        $this->assertEquals('smith@thematrix.com.au', $this->chatEndService->agentEmail);
-        $this->assertEquals(['smith@thematrix.com.au', 'smith2@thematrix.com.au'], $this->chatEndService->agents);
-        $this->assertEquals('OQ422UEDW5', $this->chatEndService->chatId);
-        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $this->chatEndService->chatStart->format(\DATE_RFC2822));
-        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $this->chatEndService->chatEnd->format(\DATE_RFC2822));
-        $this->assertNotNull($this->chatEndService->transcript);
-        $this->assertJson($this->chatEndService->transcript);
+        $this->assertEquals('tanderson@metacortex.com', $chatEndData->getVisitorEmail());
+        $this->assertEquals('Thomas Anderson', $chatEndData->getVisitorName());
+        $this->assertEquals('Agent Smith', $chatEndData->getAgentName());
+        $this->assertEquals('smith@thematrix.com.au', $chatEndData->getAgentEmail());
+        $this->assertEquals(['smith@thematrix.com.au', 'smith2@thematrix.com.au'], $chatEndData->getAgents());
+        $this->assertEquals('OQ422UEDW5', $chatEndData->getChatId());
+        $this->assertEquals('Wed, 17 May 2017 03:15:05 +0000', $chatEndData->getChatStart()->format(\DATE_RFC2822));
+        $this->assertEquals('Wed, 17 May 2017 05:20:18 +0000',  $chatEndData->getChatEnd()->format(\DATE_RFC2822));
+        $this->assertNotNull($chatEndData->getTranscript());
+        $this->assertJson($chatEndData->getTranscript());
     }
 
 }

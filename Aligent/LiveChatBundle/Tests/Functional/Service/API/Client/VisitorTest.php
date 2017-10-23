@@ -1,14 +1,10 @@
 <?php
 
-namespace Aligent\LiveChatBundle\Tests\Unit\Service\API\Client;
+namespace Aligent\LiveChatBundle\Tests\Functional\Service\API\Client;
 
-use Oro\Bundle\ContactBundle\Entity\Contact;
-use Oro\Bundle\ContactBundle\Tests\Functional\DataFixtures\LoadContactEntitiesData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Aligent\LiveChatBundle\Service\API\Client\Visitor;
-use Aligent\LiveChatBundle\Service\Webhook\ChatException;
-use Aligent\LiveChatBundle\Service\Webhook\ChatStart;
-use Aligent\LiveChatBundle\Tests\Unit\DataFixtures\LoadContactEnhancedEntities;
+use Aligent\LiveChatBundle\Tests\Functional\DataFixtures\LoadContactEnhancedEntities;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * Unit tests for Visitor service
@@ -26,10 +22,12 @@ class VisitorTest extends WebTestCase {
     protected $visitorApiService;
 
     protected function setUp() {
+        parent::setUp();
+
         $this->initClient();
 
         $this->loadFixtures([
-            'Aligent\LiveChatBundle\Tests\Unit\DataFixtures\LoadContactEnhancedEntities',
+            'Aligent\LiveChatBundle\Tests\Functional\DataFixtures\LoadContactEnhancedEntities',
         ]);
 
         $this->visitorApiService = $this->getContainer()->get('livechat.api_client_visitor');

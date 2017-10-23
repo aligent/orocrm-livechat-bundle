@@ -11,22 +11,19 @@ datagrids:
                     - t.chatStart
                 from:
                     - { table: %livechat.chattranscript.entity.class%, alias: t }
-                #join:
-                #    left:
-                #        - { join: t.priority, alias: priority }
         columns:
             id:
-                label: ID
+                label: aligent.livechat.chattranscript.id.label
                 frontend_type: integer
             contactName:
-                label: Contact Name
+                label: aligent.livechat.chattranscript.contact_name.label
             email:
-                label: Email
+                label: aligent.livechat.datagrid.email.label
             chatStart:
-                label: Chat Started
+                label: aligent.livechat.chattranscript.chat_start.label
                 frontend_type: datetime
             agentName:
-                label: Agent Name
+                label: aligent.livechat.chattranscript.agent_name.label
         sorters:
             columns:
                 id:
