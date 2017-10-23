@@ -3,18 +3,25 @@ parameters:
     livechat.chattranscript.activity.manager.class:  Aligent\LiveChatBundle\Entity\Manager\ChatTranscriptManager
     livechat.activity_list.provider.class:           Aligent\LiveChatBundle\Provider\ChatActivityListProvider
     livechat.listener.config_listener.class:         Aligent\LiveChatBundle\EventListener\ConfigListener
+    livechat.guzzle.class:                           Guzzle\Http\Client
+    livechat.api_client_visitor.class:               Aligent\LiveChatBundle\Service\API\Client\Visitor
+    livechat.webhook_chatstart.class:                Aligent\LiveChatBundle\Service\Webhook\ChatStart
+    livechat.webhook_chatend.class:                  Aligent\LiveChatBundle\Service\Webhook\ChatEnd
+    livechat.webhook_transcriptparser.class:         Aligent\LiveChatBundle\Service\Webhook\TranscriptParser
+    livechat.repository.contact.class:               Aligent\LiveChatBundle\Entity\Repository\ContactRepository
+    livechat.repository.user:                        Aligent\LiveChatBundle\Entity\Repository\UserRepository
     livechat.security.encoder.bcrypt.cost: 10
 
 services:
     livechat.guzzle:
-        class: Guzzle\Http\Client
+        class: '%livechat.guzzle.class%'
 
     livechat.security.encoder.bcrypt:
         class: '%security.encoder.bcrypt.class%'
         arguments: ['%livechat.security.encoder.bcrypt.cost%']
 
     livechat.api_client_visitor:
-        class: Aligent\LiveChatBundle\Service\API\Client\Visitor
+        class: '%livechat.api_client_visitor.class%'
         arguments:
           - '@logger'
           - '@serializer.encoder.json'
@@ -23,7 +30,7 @@ services:
           - '@translator.default'
 
     livechat.webhook_chatstart:
-        class: Aligent\LiveChatBundle\Service\Webhook\ChatStart
+        class: '%livechat.webhook_chatstart.class%'
         arguments:
           - '@logger'
           - '@serializer.encoder.json'
@@ -31,7 +38,7 @@ services:
           - '@livechat.api_client_visitor'
 
     livechat.webhook_chatend:
-        class: Aligent\LiveChatBundle\Service\Webhook\ChatEnd
+        class: '%livechat.webhook_chatend.class%'
         arguments:
           - '@logger'
           - '@serializer.encoder.json'
@@ -42,16 +49,16 @@ services:
           - "@oro_activity.manager"
 
     livechat.webhook_transcriptparser:
-        class: Aligent\LiveChatBundle\Service\Webhook\TranscriptParser
+        class: '%livechat.webhook_transcriptparser.class%'
         arguments: ['@logger', '@serializer.encoder.json']
 
     livechat.repository.contact:
-        class: 'Aligent\LiveChatBundle\Entity\Repository\ContactRepository'
+        class: '%livechat.repository.contact.class%'
         arguments:
             - '@oro_contact.contact.manager'
 
     livechat.repository.user:
-        class: 'Aligent\LiveChatBundle\Entity\Repository\UserRepository'
+        class: '%livechat.repository.user%'
         arguments:
             - '@oro_user.manager'
 
@@ -61,7 +68,7 @@ services:
             - "@oro_activity.manager"
 
     livechat.activity_list.provider:
-        class: %livechat.activity_list.provider.class%
+        class: '%livechat.activity_list.provider.class%'
         arguments:
            - "@oro_entity.doctrine_helper"
            - "@oro_security.owner.entity_owner_accessor.link"
@@ -72,7 +79,7 @@ services:
            - {name: oro_activity_list.provider, priority: 10 }
 
     livechat.listener.system_config:
-      class: %livechat.listener.config_listener.class%
+      class: '%livechat.listener.config_listener.class%'
       arguments:
         - "@livechat.security.encoder.bcrypt"
       tags:
